@@ -29,10 +29,11 @@ pip install selenium
 - 코드 작성
 
 ```python
+## 기본코드
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-driver = webdriver.Chrome("Crawling/chromedriver")
+driver = webdriver.Chrome("Crawling/chromedriver") # driver가 저장된 상대경로
 driver.get("https://www.google.co.kr")
 
 ```
