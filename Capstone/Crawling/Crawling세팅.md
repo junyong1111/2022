@@ -33,9 +33,13 @@ pip install selenium
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-driver = webdriver.Chrome("Crawling/chromedriver") # driver가 저장된 상대경로
+driver = webdriver.Chrome("/Users/dak_kiwon/Jun/Git_dir/KMU-2022/Capstone/Crawling/chromedriver") # driver가 저장된 상대경로
 driver.get("https://www.google.co.kr")
 
 ```
 
+#### 만약 개발자를 확인할 수 없다는 메시지가 뜬다면 chromedriver가 있는 폴더로 가서 아래 명령어 실행
+```
+xattr -d com.apple.quarantine chromedriver
+```
 
