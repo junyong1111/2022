@@ -1,3 +1,4 @@
+//백준(8958) OX퀴즈
 #include <iostream>
 #include <cmath>
 #include <string>
