@@ -5,7 +5,7 @@ import urllib.request
 from selenium.webdriver.common.by import By
 
 #구글페이지에 기본적인 이미지 수는 50장
-keyword = "버터"
+keyword = "eggplant"
 count = 1
 
 driver = webdriver.Chrome("/Users/dak_kiwon/Jun/Git_dir/KMU-2022/Capstone/Crawling/chromedriver")

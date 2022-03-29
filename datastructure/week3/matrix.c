@@ -1,13 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-<<<<<<< HEAD
-int main(void){
-    
-    
-   
-
-=======
 
 int main(){
     int matrix1[2][2];
@@ -42,12 +35,6 @@ int main(){
         }
         printf("\n");
     }
-
-
-
-
     
-    
->>>>>>> df67ec29cb5f0d0d1c9926c141282b8d3eb19fa1
     return 0;
 }
