@@ -12,17 +12,10 @@ ML
     - ###### GPU연산 가능  
 ##### #주의점 : Colab 무료버전은 최대 런타임 시간은 12시간이므로 구글 드라이브를 통한 데이터 백업 필요
 
-### How to start
-* YOLO
-* Tensorflow
-* OCR 
+### 필수 라이브러리 설치
 
 <details>
-<summary> 학습모델 사용 </summary>>
-<div markdown="1"> 
-
-<details>
-<summary> YOLO </summary>>
+<summary>  YOLO </summary>
 <div markdown="1"> 
 
 * YOLO테스트를 위한 필수 라이브러리 설치
@@ -32,6 +25,51 @@ pip install numpy as np
 pip install cmake
 pip install dlib
 ```
+
+</div>
+</details>
+
+<details>
+<summary>Tensorflow </summary>
+<div markdown="1"> 
+
+* Tensorflow를 위한 필수 라이브러리 설치
+```python
+pip install opencv-python
+pip install tensorflow
+pip install numpy
+```
+
+</div>
+</details>
+
+
+<details>
+<summary>OCR </summary>
+<div markdown="1"> 
+
+* OCR을 위한 필수 라이브러리 설치
+
+```python
+sudo apt install tesseract-ocr 
+
+pip install pytesseract
+```
+
+</div>
+</details>
+
+### How to start
+
+
+<details>
+<summary> 학습모델 사용 </summary>>
+<div markdown="1"> 
+
+<details>
+<summary> YOLO </summary>>
+<div markdown="1"> 
+
 
 * Yolo모델을 사용하기 위한 코드
 ```python
