@@ -46,6 +46,67 @@ void insertLast(ListType *L, char elem){
 
 }   
 
+void insert(ListType* L, int pos, char elem){
+    ListNode *node = (ListNode*) malloc(sizeof(ListNode));
+    ListNode *p = L->Head;
+
+    if(pos == 1)
+        insertFirst(L,elem);
+    else{
+        for(int i=1; i< pos-1; i++)
+            p = p->next;
+        node->data = elem;
+        node->next = p->next;
+        p->next = node;  
+    }
+
+}
+
+char deleteFirst(ListType *L){
+    ListNode * p = L->Head;
+    char elem = p->data;
+    L->Head = p->next;
+    free(p);
+    return elem;
+}
+
+char deleteLast(ListType *L){
+    ListNode * p = L->Head;
+    ListNode * q;
+
+    while(p->next != NULL)
+    {
+        q = p;
+        p = p->next;
+    }
+    
+    char elem = p->data;
+    q->next = NULL;
+    free(p);
+    return elem;
+}
+
+char delete(ListType *L, int pos){
+    ListNode * p = L->Head;
+    ListNode * q;
+
+    if(pos==1)
+        deleteFirst(L);
+    else{
+        for(int i=1; i<=pos-1; i++)
+        {
+            q = p;
+            p = p->next;
+        }
+        char elem = p->data;
+        q->next = p->next;
+        free(p);
+        return elem;
+    }
+    
+}
+
+
 void print(ListType * L){
     ListNode* p; //리스트 노드를 가르키는 빨간 화살표
 
@@ -66,6 +127,20 @@ int main(void){
     getchar();
 
     insertLast(&L, 'D'); print(&L);
-   
+    getchar();
+    
+    insert(&L, 1, 'F'); print(&L);
+    insert(&L, 3, 'G'); print(&L);
+    insert(&L, 5, 'H'); print(&L);
+    getchar();
+
+    printf("%c is deleted.\n", deleteFirst(&L)); print(&L);
+    printf("%c is deleted.\n", deleteLast(&L)); 
+    getchar();
+    printf("%c is deleted.\n", delete(&L, 2)); print(&L);
+    getchar();
+
+
     return 0;
+
 }
