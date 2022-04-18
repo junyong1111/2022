@@ -2,8 +2,6 @@ from pytesseract import Output
 import pytesseract
 from PIL import Image
 import numpy as np
-import jellyfish
-import imutils
 import cv2
 import os
 import re
