@@ -15,8 +15,14 @@
 
 ## Simple , Slow
 
-### 1. Selection Sort(선택 정렬) 
-선택정렬의 아이디어는 다음과 같다 
+
+<details>
+<summary> 1. Selection Sort(선택 정렬) </summary>
+<div markdown="1">   
+
+
+
+### 선택정렬의 아이디어는 다음과 같다 
 1. 배열 중 가장 큰 값을 찾는다  
 2. 가장 큰 값과 마지막 Index와 Swap  
 
@@ -34,6 +40,10 @@ ex)
 [29, 19, 14, 13, 37]
 ```
 위 과정 반복
+
+### 의사코드
+![Selection_Sort](https://user-images.githubusercontent.com/79856225/163812353-6c9021bf-4aa3-4a35-afd9-2c636434e0ef.jpeg)
+
 
 ### Selection Sort 구현
 
@@ -70,7 +80,6 @@ for(int i=0; i<N; i++)
     cout << arr[i] << " " ;
 return 0;
 }
-
-
-
 ```
+</div>
+</details>
