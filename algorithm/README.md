@@ -225,6 +225,8 @@ return 0;
 }
 ```
 
-
 </div>
 </details>
+  
+
+## Fast
