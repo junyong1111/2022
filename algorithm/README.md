@@ -155,8 +155,10 @@ return 0;
 
 <details>
 <summary> 3. Insertion Sort(삽입 정렬) </summary>
-<div markdown="1"> 
-뒤에서부터는 체크해야함 그 이유는 어차피 앞에서부터 확인 하더라도 들어갈 자리를 한 자리씩 Shift하는 과정이 필요
+<div markdown="1">   
+
+
+뒤에서부터는 체크해야함 그 이유는 어차피 앞에서부터 확인 해서 들어갈 자리를 확인하더라도 뒤에서 부터 한 자리씩 Shift하는 과정이 필요함
 
 #### Insert하기 전 Index까지는 이미 정렬이 되었다고 가정
 
@@ -197,7 +199,30 @@ ex)
 ### Insertion Sort 구현
 
 ```c++
+#include <iostream>
+#define N 5
+using namespace std;
 
+int main(){
+
+int idx=0;
+int arr[N] = {29, 10, 14, 37, 13};
+int temp = 0;
+
+for(int i=1; i<N; i++){
+    temp = arr[i]; 
+    idx = i; //현재 i의 값을 저장
+    while(arr[idx] <= arr[idx-1]){ 
+        // 제일 처음은 정렬이 되었다고 생각하고 그 다음부터 작은값이 나올때까지 한자리씩 Swap
+        arr[idx] = arr[idx-1];
+        arr[idx-1] = temp;
+        idx --;
+    }
+}
+for(int i=0; i<N; i++)
+    cout << arr[i] << " " ;
+return 0;
+}
 ```
 
 
