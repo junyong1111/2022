@@ -4,7 +4,7 @@ using namespace std;
 
 int main(){
 
-int arr[N] = {24, 120, 64, 37, 13};
+int arr[N] = {10,29,14,37,13};
 int max = 0;
 int Last = N-1;
 int k = 0;
