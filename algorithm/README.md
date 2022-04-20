@@ -333,16 +333,108 @@ int main(){
 
 
 ```
-Merge하는 부분이 ..상당히 어려웠다.
+마지막 Merge하는 부분이 ..상당히 어려웠다.
+
+</div>
+</details>
 
 
 
+<details>
+<summary> 2.Quick Sort(빠른정렬)</summary>
+<div markdown="1">  
+  
+- 분할 : 조건을 이용하여 두 부분으로 분할
+- 정복 : 각각의 문제를 순환적으로 해결
+- 합병 : 합병과정은 없음
+
+Pivot(기준)을 이용하여   
+Pivot보다 작은 수<- Pivot -> Pivot보다 큰 수  
+두 부분으로 분할 후 정렬  
+Merge Sort와는 다르게 합병하는 과정이 없다.
+
+ex)
+
+```c++
+[12,24,63,12,51,2,125,32]
+```
+맨 마지막 값을 기준으로 정렬
+
+```c++
+[12,24,12,2] <- [32] -> [63,51,125] 
+```
+왼쪽데이터와 오른쪽데이터 정렬
+
+```c++
+[2,12,12,24,32,51,63,125]
+
+```
 
 
+최악의 경우를 제외하고는 **O(nlogn)**의 수행속도  
+최악의 경우는 이미 배열이 정렬된 경우이고 O(n^2)의 수행속도     
+### 최악을 제외하고 이름처럼 가장 빠른 정렬 알고리즘이며 \<algorithm>의 sort()함수가 QuickSort이다.
+
+### 의사코드
+![IMG_0416](https://user-images.githubusercontent.com/79856225/164193808-16f69515-bf22-4113-a38a-1ffff73bdf8d.jpg)
 
 
+#### # Pivot을 맨 처음 또는 맨 마지막을 설정하는건 별로 좋지 못한 방법이다. 따라서 중간값 또는 랜덤값을 설정하자
+
+### 구현
+
+```c++
+#include <iostream>
+#include <ctime>
+
+using namespace std;
 
 
+int Quick_partition(int arr[], int start, int end){
+    srand(time(NULL));
+    //int p_idx = rand()%end;
+    int p = arr[end]; // Pivot을 랜덤값으로 지정
+    int i = start-1; //배열의 밖을 지정
+    int j = start; // 시작 부분 지정
 
+    while(j<end)
+    {
+    if(arr[j]>=p) 
+        j = j+1;  // 기준보다 크면 그냥 넘어감 
+    else{  //기준보다 작다면 값을 스왑
+        i = i+1;
+        int temp = arr[j];
+        arr[j] = arr[i];
+        arr[i] = temp;
+        j = j+1;
+        }
+    }
+    int temp = arr[i+1];  //마지막 기준값을 위치에 맞게 재배치 이후 Index를 return
+    arr[i+1] = p;
+    arr[end] = temp;
+    return (i+1);
+}
+
+void Quick_Sort(int arr[], int start, int end){
+    if(start<end){
+        int pivot = Quick_partition(arr, start, end);
+        Quick_Sort(arr,start, pivot-1);
+        Quick_Sort(arr, pivot+1, end);
+    }
+}
+int main(){
+    int arr[] = {12,24,63,12,51,2,125,32};
+    int size = 8;
+    int start = 0;
+    int end = size-1;
+    Quick_Sort(arr,start, end);
+    
+    for(int i=0; i<=end; i++)
+        cout << arr[i] << " ";
+    cout << "\n";
+    return 0;
+}
+
+```
 </div>
 </details>
