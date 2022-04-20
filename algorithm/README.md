@@ -229,4 +229,120 @@ return 0;
 </details>
   
 
-## Fast
+## Fast (분할정복법)
+
+
+
+<details>
+<summary> 1. Merge Sort(합병 정렬) </summary>
+<div markdown="1">   
+
+- 분할 : 해결하고자 하는 문제를 작은 크기의 **동일한** 문제들로 분할
+- 정복 : 각각의 작은 문제를 순환적으로 해결
+- 합병 : 작은 문제의 해를 합하여(Merge) 원래 문제에 해를 구함
+
+1. 데이터가 저장된 배열을 절반으로 나눔
+2. 각각을 순환 정렬
+3. 정렬된 두 개의 배열을 합쳐 전체를 정렬!
+
+ex)
+```c++
+[12,24,63,12,51,2,125,32]
+```
+1. 데이터를 절반으로 나누고 순환하여 정렬
+```c++
+[12,12,24,63] , [2,32,51,125]
+      ↓               ↓
+[12,24], [12,63] , [2,51] , [32,125]
+   ↓        ↓         ↓         ↓
+[12],[24],[63],[12] ,[51],[2],[125],[32] 
+```
+2.  합병 후 정렬
+```c++
+[2,12,12,24,32,51,63,125]
+```
+
+
+## 정렬된 두 배열을 합쳐야 하므로 추가적인 배열을 이용하여 합병해야 한다 
+- 1번 배열은 i idx 
+- 2번 배열은 j idx 
+- 둘 중 더작은값을 새로운 배열의 맨 처음에 삽입
+- 한 쪽 배열의 index가 끝나면 나머지 배열의 값을 전부 추가 배열의 삽입
+
+
+Mergesort(int Arr[], int left ,int right , int new)
+1. left,right 의 중간 지점 계산
+2. left정렬
+3. right정렬
+4. left , right합병
+
+O(nlogn)의 수행시간 
+
+### Merge Sort 구현
+
+```c++
+#include <iostream>
+#include <algorithm>
+#define SIZE 8
+using namespace std;
+
+void Merge(int arr[], int start, int mid, int end){
+	int i = start;
+	int j = mid+1;
+	int idx = start;
+	int len = SIZE;
+	int *temp = new int[len];
+
+	while(i<=mid && j<=end){ // 둘 중 하나라도 끝날때까지
+		if(arr[i] <= arr[j])
+			temp[idx++] = arr[i++];
+		else
+			temp[idx++] = arr[j++];
+		 
+	}	//while	
+	while(i<=mid)
+		temp[idx++] = arr[i++]; // 앞쪽 데이터가 남아있다면
+	while(j<=end)
+		temp[idx++] = arr[j++]; // 뒤쪽 데이터가 남아있다면 
+
+	for(int k=start; k<=end; k++)
+		arr[k] = temp[k];
+	delete[] temp;
+}
+void Merge_Sort(int arr[], int start,int end){
+	if(start < end){ //시작보다 끝이 더 길어야 함 그게 아니라면 길이가 1개
+		int mid = (start+end)/2; //시작과 끝의 중간지점
+		Merge_Sort(arr, start, mid); //시작과 중간을 정렬
+		Merge_Sort(arr, mid+1, end); // 중간과 끝을 정렬
+		Merge(arr,start ,mid , end); // 합병 정렬
+	}
+}
+
+int main(){
+	int arr[] = {12,24,63,12,51,2,125,32};
+	int start = 0;
+	int end = SIZE-1;
+
+	Merge_Sort(arr,start,end);
+	for(int i=0; i<=end; i++)
+		cout << arr[i] << " ";
+	cout << endl;
+	return 0;
+
+}
+
+
+```
+Merge하는 부분이 ..상당히 어려웠다.
+
+
+
+
+
+
+
+
+
+
+</div>
+</details>
