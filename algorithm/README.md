@@ -1,5 +1,10 @@
+
 # 정렬(Sort)
-### 정렬 알고리즘
+<details>
+<summary> 정렬 알고리즘 </summary>
+<div markdown="1">  
+
+
 정렬 알고리즘은 크게 2가지로 나뉠 수 있다.  
 간단하지만 느린 알고리즘 , 조금 더 복잡하지만 빠른 알고리즘 
 - Simple , Slow(간단하지만 느림)
@@ -13,7 +18,12 @@
     - Quick Sokt(빠른 정렬)
     - Heap Sort(힙 정렬)
 
-## Simple , Slow
+</div>
+</details>
+
+
+### **Simple , Slow**
+
 
 
 <details>
@@ -229,7 +239,7 @@ return 0;
 </details>
   
 
-## Fast (분할정복법)
+### **Fast (분할정복법)**
 
 
 
