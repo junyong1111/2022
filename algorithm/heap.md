@@ -11,7 +11,7 @@ Complete binary tree(계층적관계)
 -  Complete binary tree : 마지막 Level을 제외하고 모든 Node가 다 있으며 마지막 Level에서 오른쪽부터 노드가 없을 수 있다.
 
 #### # Root node: Tree의 제일 윗 부분
-#### # Leaf node: 자식이 없는 제일 마지막 Node
+#### # Leaf node: 자식이 없는  마지막 level Node
 
 #### # binary tree(이진트리) : 각각의 Node가 최대 2명의 자식을 가질 수 있다.
 
@@ -21,7 +21,7 @@ Complete binary tree(계층적관계)
 ![IMG_0417](https://user-images.githubusercontent.com/79856225/164885793-5fa60bbe-e8df-4565-962a-8ddfe6a110e1.jpg)
 
 **두 번째로는 Heap property만족이다**  
-Heap property(힙의 특성) 다음 중 하나를 만족해야 함
+Heap property(힙의 특성) 다음 중 하나를 만족해야 한다.
 - Max Heap Property 
     - 부모노드는 자식노드보다 **크거나 같다**
 - Min Heap Property
@@ -60,7 +60,7 @@ Heap property(힙의 특성) 다음 중 하나를 만족해야 함
 ### MAX_HEAPIPY 구현
 
 ```c++
-int Arr = [12,24,63,12,51,2,125,32]
+int Arr = [12,24,63,14,51,2,125,32]
 ```
 입력받은 배열
 
