@@ -1,62 +1,49 @@
 #include <iostream>
-
-int Arr[] = {1,28,52};
-int SIZE = 3;
+#include <vector>
 
 using namespace std;
 
-void p(){
-    for(int i=0; i<SIZE; i++){
-        cout << Arr[i] << " " ;
+
+void MAX_HEAPIPY(int arr[], int N, int sz)
+{
+    int left = (N*2) +1;
+    int right = left +1;
+    int max = 0;
+    if(left>=sz){ //자식이 없는경우
+        cout << "There is no child!!\n";
     }
-    cout << endl;
-}
-
-
-void BUILD_HEAP(int A[], int K){
-    int L = (K*2) +1;
-    int R = L+1>=SIZE?0:L+1;
-    int Max = 0;
-    if(L>=SIZE)
-        cout << "Empty child Node\n";
     else{
-        Max = A[L]<=A[R]?R:L;
-        if(A[K] <=A[Max]){
-            int temp = A[Max];
-            A[Max] = A[K];
-            A[K] = temp;
-            BUILD_HEAP(A,Max);
+        if(right>=sz){
+            right = 0;
+            max = left;
+        } //우측 노드가 없는경우 
+        else{
+            max = arr[left]<=arr[right]?right:left;
+        }
+        if(arr[N]<= arr[max]){
+            int temp = arr[max];
+            arr[max] = arr[N];
+            arr[N] = temp;
+            MAX_HEAPIPY(arr,max,sz); //반복
         }
     }
 }
-void MAX_HEAPIPY(int A[], int SZ){
-    int L = 0;
-    int R = 0;
-    int Max = 0;
-    for(int i = (SZ-1)/2; i>=0; i--){
-        
-        L = (i*2)+1;
-        cout << "CURR L :" << L <<"\n";
-        cout << "CURR A[L] :" << A[L] <<"\n";
-        R = L+1>=SIZE?0:L+1;
-        if(R==0)
-            Max = L;
-        else 
-            Max = A[L]<=A[R]?R:L;
-        if(A[i]<=A[Max]){
-            int temp = A[Max];
-            A[Max] = A[i];
-            A[i] = temp;
-            BUILD_HEAP(A,Max);
-        }
+
+void HEAP_BUILD(int arr[], int sz){
+    int len = sz;
+    for(int i=(len/2)-1; i>=0; i--){
+        MAX_HEAPIPY(arr,i,sz); //i는 원하는 노드 
     }
 }
 
 int main(){
-    // p();
-    MAX_HEAPIPY(Arr, SIZE);
-    // p();
+    int A[] = {1,12,51};
+    int len = sizeof(A)/sizeof(int);
+    HEAP_BUILD(A,len);
+    for(int i=0; i<len; i++){
+        cout << A[i] << " " ;
+    }
+    cout << "\n";
 
-    
     return 0;
 }
