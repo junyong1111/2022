@@ -33,7 +33,8 @@ cv2.destroyAllWindows()# 모든 창 닫기
 ```
 결과  
 
-![결과이미지](/assets/images/test.png)
+![test](https://user-images.githubusercontent.com/79856225/166098760-f251f92d-0bb6-46f6-82ce-c2595a480e66.jpg)
+
 아무키나 눌러서 종료
 
 
