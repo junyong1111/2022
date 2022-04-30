@@ -1,21 +1,3 @@
----
-title: "이미지 처리를 위한 Python OpenCV사용법"
-header:
-  overlay_image: /assets/images/OpenCV_Logo_with_text.png
-  teaser: /assets/images/OpenCV_Logo_with_text.png
-show_date: true
-layout: single
-date : 2022-04-30
-classes:
-  - landing
-  - dark-theme
-toc: true
-toc_sticky: true
-categories:
-  - 컴퓨터비전
-  - OpenCV
----      
-
 ### OpenCV ??  
 OpenCV : 다양한 이미지/영상 처리를 위한 Python 오픈소스 라이브러리이며 뿐만 아니라 BSD(Berkeley Software Distribution) 라이센서를 따르기 때문에 상업적으로 사용이 가능하다! 참고로 OpenCV는 RGB 순서가 아니라 BGR순서이다.
 
