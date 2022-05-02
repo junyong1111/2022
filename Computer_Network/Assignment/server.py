@@ -9,8 +9,7 @@ serverPort = 80
 serverSocket = socket(AF_INET, SOCK_STREAM) ## TCP 소켓 연결
 serverSocket.bind(('', serverPort)) 
 
-serverSocket.listen(5)
-
+serverSocket.listen(1)
 while True:
     
     client_socket, addr = serverSocket.accept()  ## 클라이언트와 연결
@@ -21,6 +20,7 @@ while True:
     request_item = request_data[1] ## 요청 아이템
     request_version = request_data[2] ## HTTP 버전
     request_body = request_data[-2:-1]
+    put_body = request_data[-1:]
     print(data.decode())
      
     server_name = addr[0]  ## 접속한 클라이언트 주소
@@ -41,8 +41,17 @@ while True:
             
         elif request_method == "POST" : ## 정상적인 POST 요청
             if request_body[0] =='Data:': ## 요청 성공 +  전송할 Data가 있는 경우
+                with open('index.html', 'a') as f:
+                    f.write(put_body[0] + "\n")
+                    f.close()
                 response_data = "{0} 200 OK\nDate: {1}\nServer: {2}\n".format(request_version, 
                 datetime.now().strftime('%a, %d %b %Y %H:%M:%S KST'), server_name)
+                with open ('index.html', 'r') as txt:
+                        while True:
+                            body = txt.readline()
+                            if not body:
+                                break
+                            response_data += body
                 
             else: ## 요청은 성공했지만 전송할 data가 없는경우
                 response_data = "{0} 204 No content\nDate: {1}\nServer: {2}\n".format(request_version, 

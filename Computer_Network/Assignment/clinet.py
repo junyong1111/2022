@@ -1,6 +1,6 @@
 from socket import *
 
-serverName = '172.30.1.6'
+serverName = '127.0.0.1'
 serverPort = 80
 
 def create_socket_and_send_message(request_message):
@@ -48,7 +48,7 @@ create_socket_and_send_message(request_message)
 request_message = 'POST / HTTP/1.1\r\n'
 request_message += 'Host: ' + serverName + '\r\n'
 request_message += 'Connection: Keep-Alive\r\n'
-request_message += 'Data: data....\n\n'
+request_message += 'Data: Bye....\n\n'
 create_socket_and_send_message(request_message)
 
 ####################↑↑↑↑↑POST↑↑↑↑↑↑↑↑##############
