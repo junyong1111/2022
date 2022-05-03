@@ -15,34 +15,31 @@ int main(){
     string ans;
     while(Num--)
     {
-        stack<char>S;
+        stack<char>S;  // 스택생성
         string str;
         cin >> str;
         check = false;
         for(int i=0; i<str.length(); i++)
         {
-            if(str[i] == '(') //열괄
+            if(str[i] == '(') //열린괄호이면 스택에 푸쉬 하고 정상종료 true
             {
                 S.push(str[i]); 
                 check = true;
             }
                 
-            else
+            else //닫힌괄호인데 이미 스택이 비어있으면 오류종료 false 후 break 그게 아니라면 스택에서 pop
             {   
                 if(S.empty()){check = false; break;} 
                 S.pop();
-            } // 닫괄
+            } 
             
         }
-        if(S.empty() && check == true)
+        if(S.empty() && check == true) 
             ans = "YES";
-        else
+            //스택이 정상종료 되었으면서 비어있다면 쌍이 맞음
+        else // 스택이 비정상종료 또는 비어있지않다면 쌍이 맞지 않음
             ans = "NO";
-        cout << ans <<"\n";
-        
+        cout << ans <<"\n";   
     }
-    
-    
-    
     return 0;
 }
