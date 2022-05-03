@@ -1,7 +1,7 @@
 from socket import *
 
 serverName = '127.0.0.1'
-serverPort = 80
+serverPort = 8080
 
 def create_socket_and_send_message(request_message):
   # 클라이언트 소켓 만들기
@@ -48,7 +48,7 @@ create_socket_and_send_message(request_message)
 request_message = 'POST / HTTP/1.1\r\n'
 request_message += 'Host: ' + serverName + '\r\n'
 request_message += 'Connection: Keep-Alive\r\n'
-request_message += 'Data: Bye....\n\n'
+request_message += 'Data: data....\n\n'
 create_socket_and_send_message(request_message)
 
 ####################↑↑↑↑↑POST↑↑↑↑↑↑↑↑##############
