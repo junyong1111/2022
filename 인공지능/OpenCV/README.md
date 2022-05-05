@@ -411,3 +411,335 @@ while Video.isOpened():
 Video.release()
 cv2.destroyAllWindows()
 ```
+
+
+
+# Step 1 이미지 변형
+
+## 이진화
+원하는 값만을 걸러내기 위하여 
+이미지를 오로지 흑과 백으로만 표현하는 것
+
+
+### 임계값(threshold)
+
+```python
+import cv2
+
+img = 'test.jpeg'
+img = cv2.imread(img)
+GRAY = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+ret, binary = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+### 127보다 크면 흰색으로 처리
+```
+### 1. Trackbar
+
+```python
+img = cv2.imread('Test.jpg', cv2.IMREAD_GRAYSCALE) ## 바로 그레이스케일로 읽음
+
+def empty(pos):
+    print(pos)
+    pass 
+## 임계값을 프린트해주는 함수
+
+name = 'Tracbar'
+cv2.namedWindow(name) 
+
+cv2.createTrackbar('Threshold', name, 127,255, empty)
+## bar 이름 , 창 이름, 초기값, 최대값, 이벤트 처리
+
+while True:
+    thresh = cv2.getTrackbarPos('Threshold', name)
+    ret, binary = cv2.threshold(img, thresh, 255, cv2.THRESH_BINARY) ## 임계값을 읽어와서 
+    if not ret: ## 리턴값이 없으면 종료 
+        break
+    cv2.imshow(name, binary) ## 있다면 출력 
+    if cv2.waitKey(1) == ord('q'): ## q가 입력된다면 종료
+        break
+cv2.destroyAllWindows()
+```
+
+### 2. Adaptive
+이미지 전체가 아니라 영역을 세분화해서 임계치를 적용한다 일정하지 않은 이미지에 사용
+```python
+import cv2
+
+def empty(pos):
+    print(pos)
+    pass
+
+img = cv2.imread('Test.jpeg', cv2.IMREAD_GRAYSCALE)
+name = 'Tracbar'
+cv2.namedWindow(name)
+
+## bar 이름 , 창 이름, 초기값, 최대값, 이벤트 처리
+cv2.createTrackbar('block_size', name, 25, 100, empty)
+## 영역을 세분화하기 위한 block size를 정의하고 홀수만 가능하며 1보다는 커야 한다.
+cv2.createTrackbar('c', name, 3, 10, empty)
+## c->일반저긍로 양수의 값을 사용
+
+while True:
+    block_size = cv2.getTrackbarPos('block_size', name)
+    c = cv2.getTrackbarPos('c', name)
+    
+    if block_size <=1: ## 1이하면 가장 낮은 홀수인 3으로 변경
+        block_size = 3
+    if block_size %2 ==0: ## 짝수 -> 홀수로
+        block_size += 1
+    binary = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, block_size, c)
+    # binary = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block_size, c) ## 가우시안 
+
+    ### 임계값이 넘어간다면 흰색으로 MEAN_C가 아닌 가우시안도 사용가능
+    
+    cv2.imshow(name, binary)
+    if cv2.waitKey(1) == ord('q'):
+        break
+cv2.destroyAllWindows()
+```
+
+### 3. 오츠 알고리즘
+가장 최적의 임계치값을 자동으로 찾는 알고리즘 Bimodal image에 사용하기 적합하다
+
+```python
+import cv2
+
+img = cv2.imread('Test.jpeg', cv2.IMREAD_GRAYSCALE)
+ret, binary = cv2.threshold(img, 127,255, cv2.THRESH_BINARY)
+## 기본 임계치
+ret, otsu = cv2.threshold(img, -1,255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+## 오츠 알고리즘 임계치
+print('Otsu Threshold', ret)
+
+cv2.imshow("Img", img)
+cv2.imshow("Binary", binary)
+cv2.imshow("Otsu", otsu)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+# Step 2 이미지 변환
+
+### 1.팽창(Dilation)
+이미지를 확장하여 작은 구멍을 채우는 것 흰색 영역의 외곽 픽셀 주변에 흰색을 추가
+```python
+import cv2
+import numpy as np
+
+kernel = np.ones((3,3), dtype= np.uint8) 
+### 커널 필요
+
+img = cv2.imread('Test.jpeg', cv2.IMREAD_GRAYSCALE)
+dilate1 = cv2.dilate(img, kernel, iterations=1)
+## 이미지 ,커널 , 반복횟수
+dilate2 = cv2.dilate(img, kernel, iterations=2)
+dilate3 = cv2.dilate(img, kernel, iterations=3)
+
+cv2.imshow("IMG", img)
+cv2.imshow("dilate1", dilate1)
+cv2.imshow("dilate2", dilate2)
+cv2.imshow("dilate3", dilate3)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+### 2.침식(Erosion)
+이미지를 깍아서 노이즈를 제거해준다 흰색 영역의 외곽 픽셀을 검은색으로 변경!
+```python
+import cv2
+import numpy as np
+
+kernel = np.ones((3,3), dtype= np.uint8) 
+### 커널 필요
+
+img = cv2.imread('Test.jpeg', cv2.IMREAD_GRAYSCALE)
+erode1 = cv2.erode(img, kernel, iterations=1)
+erode2 = cv2.erode(img, kernel, iterations=2)
+erode3 = cv2.erode(img, kernel, iterations=3)
+
+cv2.imshow("IMG", img)
+cv2.imshow("erode1", erode1)
+cv2.imshow("erode2", erode2)
+cv2.imshow("erode3", erode3)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+### 3.열림&닫힘
+열림과 닫힘은 노이즈를 제거 후 원상태로 복구할 때 사용한다  
+
+열림(Opening) : 침식 후 팽창, 깍아서 노이즈 제거 후 살 찌움
+dilate(erode(img))
+```python
+import cv2
+import numpy as np
+
+kernel = np.ones((3,3), dtype= np.uint8) 
+### 커널 필요
+
+img = cv2.imread('Test.jpeg', cv2.IMREAD_GRAYSCALE)
+erode = cv2.erode(img, kernel, iterations=3)
+dilate = cv2.dilate(erode, kernel, iterations=3)
+
+
+cv2.imshow("IMG", img)
+cv2.imshow("erode", erode)
+cv2.imshow("dilate", dilate)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+### 3.열림&닫힘
+닫힘(Closing) : 팽창 후 침식, 구멍을 메운 후 다시 깍음
+erode(dilate(img)
+
+```python
+import cv2
+import numpy as np
+
+kernel = np.ones((3,3), dtype= np.uint8) 
+### 커널 필요
+
+img = cv2.imread('Test.jpeg', cv2.IMREAD_GRAYSCALE)
+dilate = cv2.dilate(img, kernel, iterations=3)
+erode = cv2.erode(dilate, kernel, iterations=3)
+
+cv2.imshow("IMG", img)
+cv2.imshow("erode", erode)
+cv2.imshow("dilate", dilate)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+## Step 3 이미지 검출
+### 1. 경계선(Canny Edge Detection)
+```python
+import cv2
+from cv2 import threshold
+from numpy import empty
+
+def empty(pos):
+    pass
+
+img = cv2.imread('Test.jpeg', cv2.IMREAD_GRAYSCALE)
+# canny = cv2.Canny(img, 150, 200)
+## 이미지 , minVal(하위임계값), maxVal(상위임계값)
+
+name = "Trackbar"
+cv2.namedWindow(name)
+cv2.createTrackbar('threshold1', name, 0, 255,empty) ## minVal
+cv2.createTrackbar('threshold2', name, 0, 255,empty) ## maxVal
+
+while True:
+    threshold1 = cv2.getTrackbarPos('threshold1', name)
+    threshold1 = cv2.getTrackbarPos('threshold2', name)
+    
+    canny = cv2.Canny(img, threshold1, threshold1)
+
+    cv2.imshow("IMG", canny)
+    if cv2.waitKey(1) == ord('q'):
+        break
+cv2.destroyAllWindows()
+
+```
+### 2. 윤곽선(Contour)
+경계선을 연결한 선
+
+```python
+import cv2
+
+img = cv2.imread('ocr.jpeg')
+copy_img = img.copy() ## Contour는 원본이미지를 건들기 때문에 미리 복사
+
+GRAY = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+ret,otsu = cv2.threshold(GRAY, -1, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+contours, hierarchy = cv2.findContours(otsu, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+## cv2.CHAIN_APPROX_NONE - > CHAIN_APPROX_SIMPLE(꼭지점만)
+## 윤곽선 정보, 구조
+## 이미지, 윤곽선 찾는 모드(mode) , 윤곽선 찾을때 사용하는 근사치 방법
+COLOR = (0,200,0) ### 녹색
+cv2.drawContours(copy_img, contours, -1, COLOR, 2)## 윤곽선 그리기
+## 대상이미지 , 윤고ㅓ가선 정보, 인덱스(-1이면 전체) , 색깔, 두께 
+
+
+cv2.imshow('IMG', copy_img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+### 2. 윤곽선(Contour) 찾기 모드
+1. cv2.RETR_EXTERNAL : 가장 외곽의 윤곽선만 찾음
+2. cv2.RETR_LIST : 모든 윤곽선을 찾음(계층정보(족보)가 없음)
+3. cv2.RETR_TREE : 모든 윤곽선을 찾음 (계층정보(족보)가 트리모양)
+
+```python
+import cv2
+
+img = cv2.imread('ocr.jpeg')
+copy_img = img.copy() ## Contour는 원본이미지를 건들기 때문에 미리 복사
+
+GRAY = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+ret,otsu = cv2.threshold(GRAY, -1, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+contours, hierarchy = cv2.findContours(otsu, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+## 윤곽선 정보, 구조
+## 이미지, 윤곽선 찾는 모드(mode) , 윤곽선 찾을때 사용하는 근사치 방법
+
+
+COLOR = (0,200,0) ### 녹색
+cv2.drawContours(copy_img, contours, -1, COLOR, 2)## 윤곽선 그리기
+cv2.imshow('IMG', copy_img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+### 3. 윤곽선(Contour) 경계 사각형
+윤곽선의 경계면을 둘러싸는 사각형 
+ 
+boundingRect()
+```python
+import cv2
+
+img = cv2.imread('ocr.jpeg')
+copy_img = img.copy() ## Contour는 원본이미지를 건들기 때문에 미리 복사
+
+GRAY = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+ret,otsu = cv2.threshold(GRAY, -1, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+contours, hierarchy = cv2.findContours(otsu, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+## 윤곽선 정보, 구조
+## 이미지, 윤곽선 찾는 모드(mode) , 윤곽선 찾을때 사용하는 근사치 방법
+
+COLOR = (0,200,0) ### 녹색
+
+for cnt in contours:
+    x,y,w,h = cv2.boundingRect(cnt) ## cnt에 있는 윤곽선 정보로 사각형을 그리기
+    cv2.rectangle(copy_img, (x,w),(y+w, y+h), COLOR, 2)
+cv2.imshow('IMG', copy_img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+### 4. 윤곽선(Contour) 면적
+cv2.contourArea()를 이용하여 면적을 계산가능
+```python
+import cv2
+
+img = cv2.imread('ocr.jpeg')
+copy_img = img.copy() ## Contour는 원본이미지를 건들기 때문에 미리 복사
+
+GRAY = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+ret,otsu = cv2.threshold(GRAY, -1, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+contours, hierarchy = cv2.findContours(otsu, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+## 윤곽선 정보, 구조
+## 이미지, 윤곽선 찾는 모드(mode) , 윤곽선 찾을때 사용하는 근사치 방법
+
+
+COLOR = (0,200,0) ### 녹색
+
+for cnt in contours:
+    if cv2.contourArea(cnt)>100000: ### 사각형의 면적이 25000보다 크다면 그려주기
+        x,y,w,h = cv2.boundingRect(cnt)
+        cv2.rectangle(copy_img, (x,w),(y+w, y+h), COLOR, 2)
+cv2.imshow('IMG', copy_img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
