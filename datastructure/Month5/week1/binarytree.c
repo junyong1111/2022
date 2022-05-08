@@ -23,9 +23,33 @@ TreeNode * insertNode(TreeNode* Root, element key){
         Root->left = insertNode(Root->left,key);
     else if(key > Root->key)
         Root->right = insertNode(Root->right, key);
-    
     return Root;
-    
+}
+
+void preOrder(TreeNode * Root){// 전위 순회 V->L->R
+    if(Root){
+        printf("[%d] ", Root->key);
+        preOrder(Root->left);
+        preOrder(Root->right);
+    }
+}
+
+void inOrder(TreeNode * Root){ //중위 순회 L->V->R 내림차순 정렬이기도 하다.
+    if(Root)
+    {
+        inOrder(Root->left);
+        printf("[%d] ", Root->key);
+        inOrder(Root->right);
+    }
+
+}
+
+void postOrder(TreeNode * Root){ //후위 순회 L->R->V
+    if(Root){
+        postOrder(Root->left);
+        postOrder(Root->right);
+        printf("[%d] ", Root->key);
+    }
 }
 
 
@@ -44,5 +68,11 @@ int main(){
     Root = insertNode(Root, 26);
     Root = insertNode(Root, 22);
     Root = insertNode(Root, 30);
+    preOrder(Root);
+    printf("\n");
+    inOrder(Root);
+    printf("\n");
+    postOrder(Root);
+    printf("\n");
     return 0;
 }
