@@ -6,3 +6,6 @@
     * Yolo 데이터 포멧 이미지 라벨링 프로그램
 * chart_custom-train-yolo.png
     * 12000번 학습한 결과가 담긴 이미지 파일
+* YOLO.py
+    * 50개의 클래스를 분류하는 YOLOv3model
+    * 구글드라이브에 있는 weights파일을 자동으로 다운로드
