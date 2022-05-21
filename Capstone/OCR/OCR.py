@@ -1,7 +1,20 @@
+import pytesseract
 import numpy as np
 import cv2
 
-def order_points(pts): 
+classes = ["가지","감자", "깻잎", "버터", "당근",
+            "대파","마늘", "무","배추","브로콜리",
+            "상추","새송이버섯","시금치","애호박",
+            "양배추", "양송이버섯","양파","오이",
+            "고추","고구마", "콩나물", "귤","감",
+            "딸기", "멜론", "참외", "배", "복숭아",
+            "블루베리", "사과", "수박", "파프리카",
+            "키위","방울토마토", "소고기","돼지고기",
+            "닭고기", "달걀", "조기", "갈치","고등어",
+            "문어", "꽃게", "새우", "오징어","바지락",
+            "멸치", "두부", "옥수수","밥"]
+
+def order_points(pts): ## 4개의 꼭지점을 찾는 함수
     rect = np.zeros((4, 2), dtype="float32")
 
     s = pts.sum(axis=1)
@@ -14,7 +27,7 @@ def order_points(pts):
 
     return rect
     
-def four_point_transform(image, pts):
+def four_point_transform(image, pts): ##4개의 꼭지점을 기준으로 투영변환
     rect = order_points(pts)
     (tl, tr, br, bl) = rect
 
@@ -39,17 +52,15 @@ def four_point_transform(image, pts):
 
 ####### 이미지 읽기
 
-img = cv2.imread('2.jpeg')
+img = cv2.imread('test_img/test.jpeg')
 ratio = 500.0/img.shape[0]
 dim = (int(img.shape[1] * ratio), 500)
 img = cv2.resize(img, dim, interpolation= cv2.INTER_AREA)
 og_img = img.copy()
 
-
 GRAY = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 GRAY = cv2.GaussianBlur(GRAY, (3,3), 0)
 edged = cv2.Canny(GRAY, 70,200)
-
 
 
 cnts, _ = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -68,20 +79,46 @@ for c in cnts:
         check = True
         break
 if check == False:
-    cv2.imshow("IMG", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+      img = img
+    # cv2.imshow("IMG", img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+else :
+    cv2.drawContours(img, [screenCnt], -1, (0,255,0), 2)
+    warped = four_point_transform(og_img, screenCnt.reshape(4, 2))
+    copy = warped.copy()
+    img = cv2.cvtColor(copy, cv2.COLOR_BGR2GRAY)
     
-cv2.drawContours(img, [screenCnt], -1, (0,255,0), 2)
-warped = four_point_transform(og_img, screenCnt.reshape(4, 2))
+#### TEST ####
+# cv2.imshow("IMG", img)
+# cv2.imshow("warped", copy)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
-copy = warped.copy()
 
-warped = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
-result_with_blur = cv2.adaptiveThreshold(warped,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 21,10)
 
-cv2.imshow("IMG", img)
-cv2.imshow("warped", copy)
-# cv2.imshow("result_with_blur", result_with_blur)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+min_confidence = 0.6
+result = results = pytesseract.image_to_string(img,lang="kor")
+string = results
+
+list = []
+for i in string :
+    if i.isalpha() :
+        list.append(i)
+    elif i == "\n" :
+        list.append("\n")
+    string = "".join(list)
+    result = string
+    result = result.replace("\n", " ")
+    result = result.split(" ")
+    recipe = []
+    for i in result :
+        if i != '' :
+            recipe.append(i)
+            #print(recipe)
+    out = []
+    for i in recipe:
+        for j in classes:
+            if j in i:
+                print("인식된 재료는 : ", j)
+                out.append(j)
