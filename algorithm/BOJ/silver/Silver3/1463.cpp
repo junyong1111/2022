@@ -16,7 +16,7 @@ int makeOne(int N){
                     int min = makeOne(N/3)<makeOne(N/2)?ONE[N/3]:ONE[N/2];
                     ONE[N] = min<makeOne(N-1)?(min+1):(1+ONE[N-1]);
                     return ONE[N];
-                }//2로 나눠지는경우
+                }//3,2로 나눠지는경우
                 else{
                     ONE[N] = makeOne(N/3)<makeOne(N-1)?(1+ONE[N/3]):(1+ONE[N-1]);
                     return ONE[N];
