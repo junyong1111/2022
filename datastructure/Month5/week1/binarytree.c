@@ -52,6 +52,14 @@ void postOrder(TreeNode * Root){ //후위 순회 L->R->V
     }
 }
 
+int get_node_count(TreeNode * Root){ //노드의 개수를 카운트
+    int count = 0;
+    if(Root!=NULL){ // 루트(부모)가 NULL이 아니라면 갯수를 1개 추가 하고 왼쪽 노드와 오른쪽 노드 확인
+        count = 1 + get_node_count(Root->right) + get_node_count(Root->left);
+    }
+    return count ; // 총 갯수를 반환
+}
+
 
 
 
@@ -74,5 +82,6 @@ int main(){
     printf("\n");
     postOrder(Root);
     printf("\n");
+    printf("Node is %d\n",get_node_count(Root));
     return 0;
 }
