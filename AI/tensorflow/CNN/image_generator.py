@@ -11,6 +11,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
 
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+##### 테스트 이미지 ,라벨 ####  // ##### 검증 이미지 ,라벨
 
 train_datagen = ImageDataGenerator(
     horizontal_flip = True,
@@ -41,4 +42,26 @@ for i in range(9):
   plt.imshow(np.array(image, dtype = np.uint8), cmap = 'gray')
 plt.show()
 ### 9개의 데이터 증폭 
+
+################ 실제 사용 ######################
+
+train_datagen = ImageDataGenerator(
+    horizontal_flip = True,
+    zoom_range = 0.2,
+    width_shift_range = 0.1,
+    height_shift_range = 0.1,
+    rotation_range = 30,
+    fill_mode = 'nearest'
+)
+val_datagen = ImageDataGenerator()
+batch_size = 16
+
+train_generator = train_datagen.flow(x_train,y_train, batch_size = batch_size)
+val_generator = val_datagen.flow(x_test,y_test, batch_size = batch_size)
+
+def get_step(train_len, batch_size):
+  if(train_len % batch_size >0):
+    return train_len // batch_size +1
+  else:
+    return train_len // batch_size
 
