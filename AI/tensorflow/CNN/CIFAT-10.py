@@ -16,7 +16,6 @@ print(x_test.shape, y_test.shape)
 class_names = ['airplane', 'automobile', 'bird', 'cat',
                'deer', 'dog', 'frog', 'horse',
                'sheep', 'truck']
-
 sample_size = 9
 random_idx = np.random.randint(60000, size=sample_size)
 
