@@ -25,7 +25,7 @@ train_datagen = ImageDataGenerator(
     fill_mode = 'nearest'
 )
 
-test = img_to_array(load_img('TEST_IMG')).astype(np.uint8)
+test = img_to_array(load_img('CNN/꼬부기2.jpg')).astype(np.uint8)
 plt.figure()
 plt.imshow(test)
 
@@ -53,15 +53,26 @@ train_datagen = ImageDataGenerator(
     rotation_range = 30,
     fill_mode = 'nearest'
 )
+### 6장의 추가 이미지 생성
 val_datagen = ImageDataGenerator()
 batch_size = 16
+## 배치 사이즈만큼의 크기만큼 생성
 
 train_generator = train_datagen.flow(x_train,y_train, batch_size = batch_size)
 val_generator = val_datagen.flow(x_test,y_test, batch_size = batch_size)
 
-def get_step(train_len, batch_size):
-  if(train_len % batch_size >0):
-    return train_len // batch_size +1
-  else:
-    return train_len // batch_size
+plt.figure(figsize=(5,5))
+for i in range(batch_size):
+      data= train_generator.next()
+      image = data[0]
+      plt.subplot(3,3, i+1)
+      plt.xticks([])
+      plt.yticks([])
+      plt.imshow(np.array(image, type= np.uint8), cmap = 'gray')
+plt.show()
+# def get_step(train_len, batch_size):
+#   if(train_len % batch_size >0):
+#     return train_len // batch_size +1
+#   else:
+#     return train_len // batch_size
 
