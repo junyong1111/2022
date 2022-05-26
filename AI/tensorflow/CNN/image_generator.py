@@ -75,4 +75,3 @@ plt.show()
 #     return train_len // batch_size +1
 #   else:
 #     return train_len // batch_size
-

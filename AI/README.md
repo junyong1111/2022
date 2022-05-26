@@ -1,0 +1,3 @@
+- OpenCv
+- scikit-learn
+- Tensorflow
