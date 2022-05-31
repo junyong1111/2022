@@ -3,20 +3,23 @@ import cv2
 import gdown
 import os
 
-if not os.path.exists('custom-train-yolo_final.weights'):
-    url = 'https://drive.google.com/uc?id=1ol3yLt2zao2ZQB_t4DSbmOU-BWUag6LV&export=download'
-    gdown.download(url, 'custom-train-yolo_final.weights', quiet = False)
+# if not os.path.exists('custom-train-yolo_final.weights'):
+#     url = 'https://drive.google.com/uc?id=1ol3yLt2zao2ZQB_t4DSbmOU-BWUag6LV&export=download'
+#     gdown.download(url, 'custom-train-yolo_final.weights', quiet = False)
 
-min_confidence = 0.5
-width = 800
-height = 0
-show_ratio = 1.0
 
-path = "YOLO/"
-Weights = 'custom-train-yolo_final.weights'
-file_name = path + "images/test.jpg"
-test_cfg = path + "cfg/custom-test-yolo.cfg"
+path = "./"
+Weights = '34000.weights'
+file_name = path + "images/test3.jpg"
+# test_cfg = path + "cfg/custom-test-yolo.cfg"
+### YOLOV3
+
+test_cfg = path + "cfg/yolo4.cfg"
+### YOLOV4
+
 net = cv2.dnn.readNetFromDarknet(test_cfg,Weights)
+# net = cv2.dnn.readNet(test_cfg,Weights)
+
 
 
 classes = ["문어","새송이버섯","블루베리","방울토마토","무", "배", "콩나물"
@@ -27,20 +30,27 @@ classes = ["문어","새송이버섯","블루베리","방울토마토","무", "�
            ,"버터", "귤", "닭고기", "두부" ,"양송이버섯", "키위", "갈치"]
 
 class_count = 50
-anw = []
 
- 
+
 color_lists = np.random.uniform(0, 255, size= (len(classes), 3))
 layer_names = net.getLayerNames()
-output_layers = ['yolo_82', 'yolo_94', 'yolo_106']
+
+
+
+# output_layers = ['yolo_82', 'yolo_94', 'yolo_106']
+### YOLO3
+output_layers = ['yolo_139', 'yolo_150', 'yolo_161']
+### YOLO4
+
+min_confidence = 0.3
+show_ratio = 1.0
 
 img = cv2.imread(file_name)
 
-h,w = img.shape[:2]
-height = int(h * width / w)
-blob = cv2.dnn.blobFromImage(img, 0.00392, (416,416), swapRB=True, crop=False
-							 )
 
+h,w = img.shape[:2]
+blob = cv2.dnn.blobFromImage(img, 0.00392, (608,608), (0,0,0), swapRB=True, crop=False
+							 )
 net.setInput(blob)
 outs = net.forward(output_layers)
 
@@ -55,13 +65,13 @@ for out in outs:
 		scores = detection[5:]
 		class_id = np.argmax(scores)
 		confidence = scores[class_id]
-		if confidence > min_confidence:
+		if confidence >= min_confidence:
 			#print(detection)
 			# Object detected
-			center_x = int(detection[0] * width)
-			center_y = int(detection[1] * height)
-			w = int(detection[2] * width)
-			h = int(detection[3] * height)
+			center_x = int(detection[0] * w)
+			center_y = int(detection[1] * h)
+			w = int(detection[2] * w)
+			h = int(detection[3] * h)
 
 			# Rectangle coordinates
 			x = int(center_x - w /2)

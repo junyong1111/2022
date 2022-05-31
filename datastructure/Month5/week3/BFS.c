@@ -209,36 +209,34 @@ void print(Graph *G){
     }
     printf("\n");
 }
-
-void DFS(Graph *G, int Target){
+void BFS(Graph *G, int Target){
     Vertex *v = findVertex(G, Target);
-    incidentEdge *q;
-    StackType S;
-    initStack(&S);
-    push(&S, v->vKey);
-    while(!isStackEmpty(&S)){
-        v = findVertex(G,peek(&S));
-            if(v->isVisit == FALSE){
-                v->isVisit = TRUE;
-                printf("[%d] ", v->vKey); 
+    incidentEdge *e;
+    QueueType Q;
+    initQueue(&Q);
+
+    enqueue(&Q, v->vKey);
+
+    while(!isQueueEmpty(&Q)){
+        v = findVertex(G,dequeue(&Q));
+        if(v->isVisit == FALSE){
+            v->isVisit = TRUE;
+            printf("[%d] ", v->vKey); 
+            for(e=v->iHead; e!=NULL; e = e->next){
+                enqueue(&Q, e->key);
             }
-            for(q=v->iHead; q!=NULL; q = q->next){
-                v = findVertex(G, q->key);
-                {
-                    if(v->isVisit == FALSE){
-                        push(&S, v->vKey);
-                        break;
-                    }
-                }
-        }
-        if(q==NULL){
-            pop(&S);
         }
     }
 }
-
-
+void initVisit(Graph *G, int node){
+    Vertex * v = G->vHead;
+    for(int i=0; i<node; i++){
+        v->isVisit = FALSE;
+        v = v->next;
+    }
+}
 int main(){
+
     Graph G;
     init(&G);  
 
@@ -250,7 +248,7 @@ int main(){
     insertEdge(&G, 3,4); 
 
     print(&G);
-    DFS(&G, 1);
+    BFS(&G, 1);
     printf("\n");
     return 0;
 }
