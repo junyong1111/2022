@@ -9,8 +9,8 @@ import os
 
 
 path = "./"
-Weights = '34000.weights'
-file_name = path + "images/test3.jpg"
+Weights = 'yolov4_last.weights'
+file_name = path + "images/test.jpg"
 # test_cfg = path + "cfg/custom-test-yolo.cfg"
 ### YOLOV3
 
@@ -44,12 +44,13 @@ output_layers = ['yolo_139', 'yolo_150', 'yolo_161']
 
 min_confidence = 0.3
 show_ratio = 1.0
+Yolo_size = (608,608)
 
 img = cv2.imread(file_name)
 
 
 h,w = img.shape[:2]
-blob = cv2.dnn.blobFromImage(img, 0.00392, (608,608), (0,0,0), swapRB=True, crop=False
+blob = cv2.dnn.blobFromImage(img, 0.00392, Yolo_size, (0,0,0), swapRB=True, crop=False
 							 )
 net.setInput(blob)
 outs = net.forward(output_layers)
@@ -81,6 +82,7 @@ for out in outs:
 			confidences.append(float(confidence))
 			names.append(classes[class_id])
 			colors.append(color_lists[class_id])
+			
 
 indexes = cv2.dnn.NMSBoxes(boxes, confidences, min_confidence, 0.4)
 
