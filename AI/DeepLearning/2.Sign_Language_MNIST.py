@@ -5,8 +5,10 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
 ### 데이터 로드 ###
-train_df = pd.read_csv("/content/sign_mnist_train.csv")
-valid_df = pd.read_csv("/content/sign_mnist_valid.csv")
+### 데이터 다운로드 링크 ###
+#https://www.kaggle.com/code/emilyjiminroh/cnn-sign-language-mnist-eng-kor/data#
+train_df = pd.read_csv("/content/sign_mnist_train.csv") ## 해당 파일 경로
+valid_df = pd.read_csv("/content/sign_mnist_valid.csv") ## 해당 파일 경로
 print(train_df.head())
 y_train = train_df['label']
 y_valid = valid_df['label']

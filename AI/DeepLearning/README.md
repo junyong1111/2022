@@ -177,6 +177,125 @@ model.fit(x_train, y_train, epochs=20, verbose=1, validation_data=(x_valid, y_va
 </div>
 </details>
 
+<details>
+<summary> 3.합성곱신경망 (Convolutional Neural Networks) </summary>
+<div markdown="1">  
+
+이미지 분류에 자주 사용되는 CNN모델에 대해 학습   
+수화이미지에서 사용하였던 방법과 마찬가지이다.
+
+1. pandas를 이용하여 데이터 로드
+2. 라벨값 분류
+3. 학습,검증 데이터값 분류
+4. 24개의 범주 레이블
+5. 0 ~ 1사이에 값으로 정규화
+
+위 과정을 마치고 확인해보면 아까와 마찬가지로 학습데이터 27455장의 784 1차원 학습 데이터, 7172장의 784 1차원 검증데이터로 되어있다. 
+
+```python
+import tensorflow.keras as keras
+import pandas as pd
+
+# Load in our data from CSV files
+train_df = pd.read_csv("/content/sign_mnist_train.csv")
+valid_df = pd.read_csv("/content/sign_mnist_valid.csv")
+
+# Separate out our target values
+y_train = train_df['label']
+y_valid = valid_df['label']
+del train_df['label']
+del valid_df['label']
+
+# Separate out our image vectors
+x_train = train_df.values
+x_valid = valid_df.values
+
+# Turn our scalar targets into binary categories
+num_classes = 24
+y_train = keras.utils.to_categorical(y_train, num_classes)
+y_valid = keras.utils.to_categorical(y_valid, num_classes)
+
+# Normalize our image data
+x_train = x_train / 255
+x_valid = x_valid / 255
+x_train.shape, x_valid.shape
+```
+
+위 처럼 1차원의 데이터로 펼치면 서로 가까운 픽셀에대한 정보를 가지고 있지않다. 따라서 1차원의 데이터를 다시 3차원의 데이터로 변환해준다 이때 28x28x1인 이유는 Grapyscale이기 때문이다 또한 -1를 인자로 주게 되면 그 값은 자동으로 계산된다.  
+이후 확인해보면 27455장의 3차원 학습데이터 , 7172장의 3차원 검증데이터로 reshape되어있는걸 확인할 수 있다.
+
+```python
+x_train = x_train.reshape(-1,28,28,1)
+x_valid = x_valid.reshape(-1,28,28,1)
+x_train.shape
+x_valid.shape
+x_train.shape, x_valid.shape
+```
+
+모델을 생성하는 단계이다.
+1. Conv2D
+- 2D 컨볼루션 레이어이며 작은 커널은 입력 이미지들을 훑으며, 분류에 중요한 특징들을 파악한다. 모델의 초기 컨볼루션은 선과 같은 간단한 특징을 탐지한다. 이후 컨볼루션은 점점 더 복잡한 특징을 탐지한다.  
+- 75는 우리가 학습하게 될 필터(Filter)의 갯수를 의미하며  
+- (3,3) 은 필터의 크기를 의미한다. 
+- strides는 얼만큼의 보폭으로 움직일지
+- padding은 입력 이미지와 결과 이미지의 크기를 맞추기 위해서 사용되며 제로패딩 또는 동일패딩을 사용한다.
+
+2. BatchNormalization()
+- 입력을 정규화하는 것과 마찬가지로, 배치정규화는 hidden layer들의 값을 scaling하여 학습을 개선한다.
+
+3. MaxPool2D()
+- 필터를 이용하여 계산된 값들 중 최대값만 가져온다 더 낮은 해상도로 축소하는 과정이며 이렇게 하면 모델이 약간의 변화에 더욱 견고하게 만들 수 있고, 모델의 학습 및 추론을 더욱 빠르게 할 수 있습니다.
+
+4. Dropout()
+- 위 수화예제에서 발생하였던 과적합을 방지하기 위한 방법 중 하나이며 무작위로 뉴런을 제외시키는 방식이다.
+
+5. Flatten()
+- 다차원입력을 1차원으로 바꿔주는 평탄화 작업을 해주며 분류를 위한 마지막 레이어로 들어간다.
+
+6. Dense()
+- 평탄화 작업한 feature vector를 입력으로 받아 어떤 feature가 분류에 기여하는지를 확인하며 마지막에는 분류를 위해 24개의 클래스 softmax를 이용한다.
+
+위 과정을 거친 후 모델를 확인해보면 이전보다 파라메터 개수가 상당히 줄어든걸 확인 할 수 있으며 2번 실습과 같이 20epoch로 학습을 진행한다.
+
+```python
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import (
+    Dense,
+    Conv2D,
+    MaxPool2D,
+    Flatten,
+    Dropout,
+    BatchNormalization,
+)
+
+model = Sequential()
+model.add(Conv2D(75, (3, 3), strides=1, padding="same", activation="relu", 
+                 input_shape=(28, 28, 1)))
+model.add(BatchNormalization())
+model.add(MaxPool2D((2, 2), strides=2, padding="same"))
+model.add(Conv2D(50, (3, 3), strides=1, padding="same", activation="relu"))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
+model.add(MaxPool2D((2, 2), strides=2, padding="same"))
+model.add(Conv2D(25, (3, 3), strides=1, padding="same", activation="relu"))
+model.add(BatchNormalization())
+model.add(MaxPool2D((2, 2), strides=2, padding="same"))
+model.add(Flatten())
+model.add(Dense(units=512, activation="relu"))
+model.add(Dropout(0.3))
+model.add(Dense(units=num_classes, activation="softmax"))
+
+model.summary()
+model.compile(loss="categorical_crossentropy", metrics=["accuracy"])
+model.fit(x_train, y_train, epochs=20, verbose=1, validation_data=(x_valid, y_valid))
+```
+
+### 결과 : 학습결과와 검증결과 둘 다 상당히 개선된 모습을 확인 할 수 있었다. 이와 같이 같은 데이터의 모델을 바꾸는 방법으로 아까의 과적합 문제를 해결할 수 있다. 
+
+
+</div>
+</details>
+
 
 
 <!-- 
