@@ -297,6 +297,143 @@ model.fit(x_train, y_train, epochs=20, verbose=1, validation_data=(x_valid, y_va
 </details>
 
 
+<details>
+<summary> 4. 데이터 증강 </summary>
+<div markdown="1">  
+
+위 결과에서 과적합을 피하는 방법 중 하나로 모델의 아키텍쳐를 바꾸는 방법이 있었다. 뿐만 아니라 과적합을 피하는 방법 중 또다른 하나는 더 많은 데이터를 학습하는 방법이 있다. 기존에 있던 데이터를 증강하기 위하여 데이터 증강에 대한 방법에 대해 알아보자.
+
+1. 데이터 로드
+2. 데이터 ,라벨로 분류
+3. 24개의 레이블 범주 인코딩
+4. 0 ~ 1사이에 부동소수점으로 정규화
+5. 3차원 데이터로 reshape
+
+```python
+import tensorflow.keras as keras
+import pandas as pd
+
+# Load in our data from CSV files
+train_df = pd.read_csv("/content/sign_mnist_train.csv")
+valid_df = pd.read_csv("/content/sign_mnist_valid.csv")
+
+# Separate out our target values
+y_train = train_df['label']
+y_valid = valid_df['label']
+del train_df['label']
+del valid_df['label']
+
+# Separate our our image vectors
+x_train = train_df.values
+x_valid = valid_df.values
+
+# Turn our scalar targets into binary categories
+num_classes = 24
+y_train = keras.utils.to_categorical(y_train, num_classes)
+y_valid = keras.utils.to_categorical(y_valid, num_classes)
+
+# Normalize our image data
+x_train = x_train / 255
+x_valid = x_valid / 255
+
+# Reshape the image data for the convolutional network
+x_train = x_train.reshape(-1,28,28,1)
+x_valid = x_valid.reshape(-1,28,28,1)
+```
+
+3번 실습에서 사용하였던 모델을 그대로 가져와서 사용
+
+```python
+## 20195298 박준용 ##
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import (
+    Dense,
+    Conv2D,
+    MaxPool2D,
+    Flatten,
+    Dropout,
+    BatchNormalization,
+)
+
+model = Sequential()
+model.add(Conv2D(75, (3, 3), strides=1, padding="same", activation="relu", 
+                 input_shape=(28, 28, 1)))
+model.add(BatchNormalization())
+model.add(MaxPool2D((2, 2), strides=2, padding="same"))
+model.add(Conv2D(50, (3, 3), strides=1, padding="same", activation="relu"))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
+model.add(MaxPool2D((2, 2), strides=2, padding="same"))
+model.add(Conv2D(25, (3, 3), strides=1, padding="same", activation="relu"))
+model.add(BatchNormalization())
+model.add(MaxPool2D((2, 2), strides=2, padding="same"))
+model.add(Flatten())
+model.add(Dense(units=512, activation="relu"))
+model.add(Dropout(0.3))
+model.add(Dense(units=num_classes, activation="softmax"))
+```
+
+데이터 증강을 위하여 ImageDataGenerator 함수를 사용한다 
+- 이미지 회전
+- 이미지 확대
+- 좌우 이동
+- 상하 이동
+- 수평 이동
+- 수직 이동
+위와 같은 방법을 통해 하나의 이미지를 여러장의 데이터로 증강하는게 가능하다 또한 무작위 샘플에대한 처리를 위해 자동으로 배치처리가 된다.
+
+```python
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+datagen = ImageDataGenerator(
+    rotation_range=10,  # randomly rotate images in the range (degrees, 0 to 180)
+    zoom_range=0.1,  # Randomly zoom image
+    width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
+    height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
+    horizontal_flip=True,  # randomly flip images horizontally
+    vertical_flip=False, # Don't randomly flip images vertically
+)  
+
+import matplotlib.pyplot as plt
+import numpy as np
+batch_size = 32
+img_iter = datagen.flow(x_train, y_train, batch_size=batch_size)
+
+x, y = img_iter.next()
+fig, ax = plt.subplots(nrows=4, ncols=8)
+for i in range(batch_size):
+    image = x[i]
+    ax.flatten()[i].imshow(np.squeeze(image))
+plt.show()
+```
+
+증강된 데이터를 이용하여 모델학습을 시작한다 이 때 무한히 데이터를 생성하는걸 방지하기 위해 steps_per_epoch라는 인수를 사용하여 각 에포크가 얼마나 오랫동안 실행되어야 하는지를 명시적으로 설정하여야 한다. 여기서 사용할 일반적인 방식인 steps * batch_size = number_of_images_trained in an epoch는 단계 수를 증강되지 않은 데이터세트 크기를 batch_size(기본값 32)로 나눈 값과 동일하게 설정하는 것이기 때문이다.
+
+```python
+datagen.fit(x_train)
+model.compile(loss='categorical_crossentropy', metrics=['accuracy'])
+model.fit(img_iter,
+          epochs=20,
+          steps_per_epoch=len(x_train)/batch_size, # Run same number of steps we would if we were not using a generator.
+          validation_data=(x_valid, y_valid))
+```
+
+### 결과 : 이전 모델보다 검증 정확도가 더 높고 일관적인 모습을 확인할 수 있다 위와 같은 방법으로 일반화가 개선되었고 새로운 데이터에 대한 예측도 개선된걸 확인 할 수 있었다. 
+
+```python
+### 다음 실습에 사용하기 위하여 현재 모델을 저장 ### 
+model.save('asl_model')
+```
+</div>
+</details>
+
+
+
+
+<img width="803" alt="20195298_박준용" src="https://user-images.githubusercontent.com/79856225/172140056-2a099223-1118-4f85-8054-8308e8b7f6bd.png">
+
+
 
 <!-- 
 <details>
