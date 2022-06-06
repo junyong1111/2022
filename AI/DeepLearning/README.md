@@ -90,6 +90,93 @@ history = model.fit(
 </div>
 </details>
 
+<details>
+<summary> 2. 미국 수화 데이터세트 이미지 분류 </summary>
+<div markdown="1">  
+
+캐글에서 제공해주는 미국 수화 데이터세트를 이용하여 모델을 트레이닝한다
+
+csv파일을 로드하기위해서 pands 라이브러리를 이용한 후 각각의 데이터들의 값들을 확인해보면 각 label값  이미지의 픽셀값을 나타내고있다. 학습 데이터라벨과 검증 데이터 라벨의 값을 가져온 뒤 삭제해주고 학습 데이터와 검증 데이터의 값을 넣어준다. 이후 확인해보면  트레이닝을 위한 각각 784개 픽셀을 포함하는 27,455개의 이미지와 검증을 위해서는 7,172개의 이미지와 라벨이 있는걸 확인 할 수 있다.
+[https://www.kaggle.com/code/emilyjiminroh/cnn-sign-language-mnist-eng-kor/data]
+
+```python
+import pandas as pd
+train_df = pd.read_csv("/content/sign_mnist_train.csv")
+valid_df = pd.read_csv("/content/sign_mnist_valid.csv")
+print(train_df.head())
+y_train = train_df['label']
+y_valid = valid_df['label']
+del train_df['label']
+del valid_df['label']
+x_train = train_df.values
+x_valid = valid_df.values
+print(x_train.shape)
+print(y_train.shape)
+print(x_valid.shape)
+print(y_valid.shape)
+```
+
+현재 저장된 값들의 데이터를 한번 시각화를 하기 위해서 1차원 데이터를 다시 2차원의 28X28의로 reshape해준다 이 후 20개의 수화이미지를 확인해본 결과이다.
+
+```python
+import matplotlib.pyplot as plt
+plt.figure(figsize=(40,40))
+
+num_images = 20
+for i in range(num_images):
+    row = x_train[i]
+    label = y_train[i]
+    
+    image = row.reshape(28,28)
+    plt.subplot(1, num_images, i+1)
+    plt.title(label, fontdict={'fontsize': 30})
+    plt.axis('off')
+    plt.imshow(image, cmap='gray')
+```
+
+1번 MNIST 실습에서 했던거와 마찬가지로 데이터를 로드 이후 
+1. 0 ~ 255의 값을 0 ~ 1의 부동소수점으로 정규화
+2. 총 24개의 레이블로 범주 인코딩
+3. 모델 생성 
+- 활성화 함수로는 relu 사용 첫 레이어는 input값 지정
+- 활성화 함수로 relu 사용 이후 자동으로 input값이 지정되어있음
+- 분류를 위해서 softmax로 각각 클래스별로 확률값 반환
+4. 모델 확인
+5. 모델 컴파일 
+- 분류모델의 손실함수 크로스엔트로피 사용
+6. 모델 학습
+- 총 20 eopchs만큼 학습
+
+```python
+import tensorflow.keras as keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+x_train = x_train / 255
+x_valid = x_valid / 255
+print(x_train.min())
+print(x_train.max())
+
+num_classes = 24
+y_train = keras.utils.to_categorical(y_train, num_classes)
+y_valid = keras.utils.to_categorical(y_valid, num_classes)
+
+model = Sequential()
+model.add(Dense(units = 512, activation='relu', input_shape=(784,)))
+model.add(Dense(units = 512, activation='relu'))
+model.add(Dense(units = num_classes, activation='softmax'))
+model.summary()
+
+model.compile(loss='categorical_crossentropy', metrics=['accuracy'])
+
+model.fit(x_train, y_train, epochs=20, verbose=1, validation_data=(x_valid, y_valid))
+```
+### 결과 : 결과값을 확인해보면 학습데이터로는 높은 정확도가 나왔지만 실제 검증데이터의 정확도는 그에 비해 낮은편이다 예측결과는 높지만 실제 결과값의 정확도가 낮은 과적합의 문제가 발생한걸 확인해 볼 수 있었다.
+
+
+</div>
+</details>
+
 
 
 <!-- 
