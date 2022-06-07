@@ -42,7 +42,7 @@ x_valid = x_valid / 255
 print(x_train.min())
 print(x_train.max())
 
-num_classes = 24
+num_classes = 25
 y_train = keras.utils.to_categorical(y_train, num_classes)
 y_valid = keras.utils.to_categorical(y_valid, num_classes)
 

@@ -27,8 +27,8 @@ del valid_df['label']
 x_train = train_df.values
 x_valid = valid_df.values
 
-### 24개의 클래스로 인코딩 ###
-num_classes = 24
+### 25개의 클래스로 인코딩 ###
+num_classes = 25
 y_train = keras.utils.to_categorical(y_train, num_classes)
 y_valid = keras.utils.to_categorical(y_valid, num_classes)
 
