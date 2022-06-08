@@ -433,7 +433,94 @@ model.save('asl_model')
 
 <img width="803" alt="20195298_박준용" src="https://user-images.githubusercontent.com/79856225/172140056-2a099223-1118-4f85-8054-8308e8b7f6bd.png">
 
+<details>
+<summary>5. 모델 배포 </summary>
+<div markdown="1">  
 
+위 학습에서 만들었던 모델을 배포한다.  
+저장해두었던 모델을 로드한 후 모델에 대해 확인해본다.
+
+```python
+from tensorflow import keras
+
+model = keras.models.load_model('asl_model')
+model.summary()
+```
+
+현재 이미지 데이터는 학습에 사용했던 데이터와 크기와 RGB가 다르기때문에 해당 이미지를 학습에 사용했던 데이터와 맞추기 위하여 함수를 만들어 28X28의 흑백 이미지로 변환하다.
+
+```python
+### 이미지 확인을 위한 함수정의 ### 
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+def show_image(image_path):
+    image = mpimg.imread(image_path)
+    plt.imshow(image)
+
+show_image('/content/b.png')
+```
+
+```python
+### 데이터 세트와 맞게 28x28의 GraySacle로 변환 ### 
+from tensorflow.keras.preprocessing import image as image_utils
+
+def load_and_scale_image(image_path):
+    image = image_utils.load_img(image_path, color_mode="grayscale", target_size=(28,28))
+    return image
+
+image = load_and_scale_image('/content/b.png')
+plt.imshow(image, cmap='gray')
+```
+
+이제 예측을 위해 해당 이미지를 트레이닝된 데이터세트의 모양과 일치하도록 이미지를 재구성하는 과정이 이후 정규화과정까지 해준다.
+
+```python
+## 20195298 박준용 ##
+image = image_utils.img_to_array(image)
+image = image.reshape(1,28,28,1) 
+image = image / 255
+```
+
+이제 해당 이미지를 통해 예측을 실행해본다 
+출력값은 확률값이므로 그 중 가장 큰 확률값을 찾은 후 해당 알파벳에 해당하는 값을 반환하는 방식이다.
+
+```python
+prediction = model.predict(image)
+print(prediction)
+import numpy as np
+np.argmax(prediction)
+# Alphabet does not contain j or z because they require movement
+alphabet = "abcdefghiklmnopqrstuvwxy"
+dictionary = {}
+for i in range(24):
+    dictionary[i] = alphabet[i]
+dictionary
+
+dictionary[np.argmax(prediction)]
+```
+
+```python
+### 예측을 위한 함수 ### 
+
+def predict_letter(file_path):
+    show_image(file_path)
+    image = load_and_scale_image(file_path)
+    image = image_utils.img_to_array(image)
+    image = image.reshape(1,28,28,1) 
+    image = image/255
+    prediction = model.predict(image)
+    # convert prediction to letter
+    predicted_letter = dictionary[np.argmax(prediction)]
+    return predicted_letter
+
+predict_letter("/content/a.png")
+```
+
+### 결과 : 실제로 정확도가 높으며 샘플데이터를 예측하기 이전에 학습에 사용하였던 데이터와 같은 크기와 모양으로 재구성하는 과정이 꼭 필요하다.
+
+</div>
+</details>
 
 <!-- 
 <details>
