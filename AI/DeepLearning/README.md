@@ -522,6 +522,111 @@ predict_letter("/content/a.png")
 </div>
 </details>
 
+<details>
+<summary> 6. 사전 트레이닝된 모델 </summary>
+<div markdown="1">  
+
+딥러닝은 데이터 세트를 구하는데 어려움이 많다 이럴때 미리 트레이닝된 모델을 사용하여 이를 해결할 수 있다.  
+오로지 개만 통과할 수 있는 자동문. 
+일반적인 VGG16을 이용하여 학습진행
+
+```python
+from tensorflow.keras.applications import VGG16
+  
+# load the VGG16 network *pre-trained* on the ImageNet dataset
+model = VGG16(weights="imagenet")
+model.summary()
+```
+
+```python
+### 이미지로드에 필요한 함수 ###
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+def show_image(image_path):
+    image = mpimg.imread(image_path)
+    print(image.shape)
+    plt.imshow(image)
+
+    ### 확인용 ###
+show_image("/content/happy_dog.jpg")
+```
+
+다음으로는 모델에 보낼 수 있도록 이미지를 사전 처리이다. 지난 연습에서와 마찬가지이며 . 이 경우에는 이미지의 마지막 모양이 (1, 224, 224, 3)이 되어야 한다.
+
+```python
+from tensorflow.keras.preprocessing import image as image_utils
+from tensorflow.keras.applications.vgg16 import preprocess_input
+
+def load_and_process_image(image_path):
+    # Print image's original shape, for reference
+    print('Original image shape: ', mpimg.imread(image_path).shape)
+    
+    # Load in the image with a target size of 224, 224
+    image = image_utils.load_img(image_path, target_size=(224, 224))
+    # Convert the image from a PIL format to a numpy array
+    image = image_utils.img_to_array(image)
+    # Add a dimension for number of images, in our case 1
+    image = image.reshape(1,224,224,3)
+    # Preprocess image to align with original ImageNet dataset
+    image = preprocess_input(image)
+    # Print image's shape after processing
+    print('Processed image shape: ', image.shape)
+    return image
+
+### 확인용 ###
+processed_image = load_and_process_image("/content/brown_bear.jpg")  
+```
+
+다음은 모델 예측에 필요한 함수이며 총 3개의 이미지로 테스트를 진행해보았다.
+
+```python
+from tensorflow.keras.applications.vgg16 import decode_predictions
+
+def readable_prediction(image_path):
+    # Show image
+    show_image(image_path)
+    # Load and pre-process image
+    image = load_and_process_image(image_path)
+    # Make predictions
+    predictions = model.predict(image)
+    # Print predictions in readable form
+    print('Predicted:', decode_predictions(predictions, top=3))
+
+readable_prediction("/content/happy_dog.jpg")
+readable_prediction("/content/brown_bear.jpg")
+readable_prediction("/content/sleepy_cat.jpg")
+```
+
+위 3가지 케이스에 각각 강아지, 곰, 고양이를 잘 인식하였다. 이제 해당 모델을  사용하여 개만 출입을 허용하고 고양이는 내부에 있게 할 수 있습니다. 개는 범주 151 ~ 268이고, 고양이는 범주 281 ~ 285이다.
+
+```python
+import numpy as np
+
+def doggy_door(image_path):
+    show_image(image_path)
+    image = load_and_process_image(image_path)
+    preds = model.predict(image)
+    if 151 <= np.argmax(preds) <= 268:
+        print("Doggy come on in!")
+    elif 281 <= np.argmax(preds) <= 285:
+        print("Kitty stay inside!")
+    else:
+        print("You're not a dog! Stay outside!")
+
+doggy_door("/content/happy_dog.jpg")
+doggy_door("/content/brown_bear.jpg")
+doggy_door("/content/sleepy_cat.jpg")
+```
+
+### 결과 : 사전에 학습된 모델을 이용하여 학습과정 없이 자신의 목적에 맞게 딥러닝을 이용할 수 있었다. 
+
+
+
+
+</div>
+</details>
+
 <!-- 
 <details>
 <summary>  </summary>
