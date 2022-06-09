@@ -428,11 +428,6 @@ model.save('asl_model')
 </div>
 </details>
 
-
-
-
-<img width="803" alt="20195298_박준용" src="https://user-images.githubusercontent.com/79856225/172140056-2a099223-1118-4f85-8054-8308e8b7f6bd.png">
-
 <details>
 <summary>5. 모델 배포 </summary>
 <div markdown="1">  
@@ -627,6 +622,8 @@ doggy_door("/content/sleepy_cat.jpg")
 </div>
 </details>
 
+
+<img width="803" alt="20195298_박준용" src="https://user-images.githubusercontent.com/79856225/172140056-2a099223-1118-4f85-8054-8308e8b7f6bd.png">
 <!-- 
 <details>
 <summary>  </summary>
