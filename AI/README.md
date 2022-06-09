@@ -1,3 +1,5 @@
+- DeepLearning
 - OpenCv
+- Recommendation
 - scikit-learn
 - Tensorflow
