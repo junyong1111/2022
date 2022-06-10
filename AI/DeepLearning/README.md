@@ -616,14 +616,105 @@ doggy_door("/content/sleepy_cat.jpg")
 
 ### 결과 : 사전에 학습된 모델을 이용하여 학습과정 없이 자신의 목적에 맞게 딥러닝을 이용할 수 있었다. 
 
+</div>
+</details>
 
+<details>
+<summary> 7.전이학습 </summary>
+<div markdown="1">  
+
+위 과정은 미리 학습된 데이터를 사용하기만 하는 과정이였다면 전이학습은 미리학습된 데이터를 가지고 다시 학습을하는 과정이다. 전이 학습은 크고 다양한 데이터세트가 없는 경우에 특히 강력한효과가 있다. 이런 경우에는 처음부터 트레이닝된 모델이 트레이닝 데이터를 빠르게 기억할 가능성이 높지만 새 데이터를 제대로 일반화할 수 없다. 전이 학습을 이용하면 소규모 데이터세트에 대해 정확하고 강력한 모델을 트레이닝할 수 있는 가능성을 높일 수 있다.  
+
+- 특정한 개만 출입이 가능한 자동문
+- 사전학습된 VGG16사용
+
+```python
+from tensorflow import keras
+
+base_model = keras.applications.VGG16(
+    weights='imagenet',  # Load weights pre-trained on ImageNet.
+    input_shape=(224, 224, 3),
+    include_top=False)
+
+
+base_model.summary()
+```
+
+새 레이어를 사전 트레이닝된 모델에 추가하기 전에 수행해야 할 중요한 단계가 바로  모델의 사전 트레이닝된 레이어를 동결하는 것이다. 모델 동결은 트레이닝할 때 사전 트레이닝된 모델에서 기본 레이어는 업데이트하지 않고.  새로운 분류를 위해 우리가 끝에 추가하는 새 레이어만 업데이트하게 됩니다. 
+
+기본 레이어를 동결하는 것은 모델에 대해 트레이닝 가능을 False로 설정하기만 하면 된다.
+
+```python
+base_model.trainable = False
+```
+
+새 레이어를 사전 트레이닝된 모델에 추가하는 과정이다.  새 레이어는 사전 트레이닝된 레이어의 피처를 취해 새 데이터세트에 대한 예측으로 변환한다. 
+다음은  모델에 두 개의 레이어를 추가하는것이다. 
+1.  이전의 CNN(Convolutional Neural Network)에서 봤던 풀링 레이어이다. 
+2.  그런 다음에는 Bo인지 아닌지를 분류할 마지막 레이어를 추가해야 한다. 이는 한 개의 출력을 포함하는 밀접하게 연결된 레이어가 된다.
+
+```python
+inputs = keras.Input(shape=(224, 224, 3))
+# Separately from setting trainable on the model, we set training to False 
+x = base_model(inputs, training=False)
+x = keras.layers.GlobalAveragePooling2D()(x)
+# A Dense classifier with a single unit (binary classification)
+outputs = keras.layers.Dense(1)(x)
+model = keras.Model(inputs, outputs)
+
+model.summary()
+```
+
+이전 연습에서 그랬던 것처럼 손실 및 지표 옵션으로 모델을 컴파일하는 과정이다. 여기서는 몇가지 다른 방법을 택한다 이전 분류 문제에 여러개의 레이블 범주가 있었다.  그래서 손실 계산을 위한 범주형 크로스 엔트로피를 선택했지만 이번에는 바이너리 분류 문제(Bo인지 아닌지 여부)만 있으므로 또한 기존 정확도 대신 바이너리 정확도를 사용하여 모델을 컴파일한다.
+
+```python
+# Important to use binary crossentropy and binary accuracy as we now have a binary classification problem
+model.compile(loss=keras.losses.BinaryCrossentropy(from_logits=True), metrics=[keras.metrics.BinaryAccuracy()])
+```
+
+위에서 사용했던 데이터 증강을 사용하여 데이터를 늘린다
+
+```python
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+# create a data generator
+datagen = ImageDataGenerator(
+        samplewise_center=True,  # set each sample mean to 0
+        rotation_range=10,  # randomly rotate images in the range (degrees, 0 to 180)
+        zoom_range = 0.1, # Randomly zoom image 
+        width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
+        height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
+        horizontal_flip=True,  # randomly flip images
+        vertical_flip=False) # we don't expect Bo to be upside-down so we will not flip vertically
+```
+
+데이터 증강을 사용하여 모델 학습진행
+
+```python
+# load and iterate training dataset
+train_it = datagen.flow_from_directory('data/presidential_doggy_door/train/', 
+                                       target_size=(224, 224), 
+                                       color_mode='rgb', 
+                                       class_mode='binary', 
+                                       batch_size=8)
+# load and iterate validation dataset
+valid_it = datagen.flow_from_directory('data/presidential_doggy_door/valid/', 
+                                      target_size=(224, 224), 
+                                      color_mode='rgb', 
+                                      class_mode='binary', 
+                                      batch_size=8)
+
+model.fit(train_it, steps_per_epoch=12, validation_data=valid_it, validation_steps=4, epochs=20)
+```
+
+### 결과 : 전이학습을 통해 상당히 상당히 정확도가 높은 모델을 얻을 수 있었다. 
 
 
 </div>
 </details>
 
-
 <img width="803" alt="20195298_박준용" src="https://user-images.githubusercontent.com/79856225/172140056-2a099223-1118-4f85-8054-8308e8b7f6bd.png">
+
+
 <!-- 
 <details>
 <summary>  </summary>
