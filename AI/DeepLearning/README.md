@@ -712,6 +712,73 @@ model.fit(train_it, steps_per_epoch=12, validation_data=valid_it, validation_ste
 </div>
 </details>
 
+
+<details>
+<summary> 7.파인튜닝 </summary>
+<div markdown="1">  
+
+이제 파인튜닝이라는 요령을 통해 모델을 개선할 수 있다. 파인튜닝을 학기위해서는 모델을 동결 이후 아주작은 학습률로 트레이닝 하여야 한다. 
+이 단계는 동결된 레이어를 포함하는 모델이 완전히 트레이닝된 후에만 수행해야 한다. 
+
+```python
+### 예측을 위한 함수 ### 
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from tensorflow.keras.preprocessing import image as image_utils
+from tensorflow.keras.applications.imagenet_utils import preprocess_input
+
+def show_image(image_path):
+    image = mpimg.imread(image_path)
+    plt.imshow(image)
+
+def make_predictions(image_path):
+    show_image(image_path)
+    image = image_utils.load_img(image_path, target_size=(224, 224))
+    image = image_utils.img_to_array(image)
+    image = image.reshape(1,224,224,3)
+    image = preprocess_input(image)
+    preds = model.predict(image)
+    return preds
+
+
+### Bo 분류를 위한 함수 ###
+
+def presidential_doggy_door(image_path):
+    preds = make_predictions(image_path)
+    if preds[0] < 0:
+        print("It's Bo! Let him in!")
+    else:
+        print("That's not Bo! Stay out!")
+```
+
+```python
+# Unfreeze the base model
+base_model.trainable = True
+
+# It's important to recompile your model after you make any changes
+# to the `trainable` attribute of any inner layer, so that your changes
+# are taken into account
+model.compile(optimizer=keras.optimizers.RMSprop(learning_rate = .00001),  # Very low learning rate
+              loss=keras.losses.BinaryCrossentropy(from_logits=True),
+              metrics=[keras.metrics.BinaryAccuracy()])
+
+
+model.fit(train_it, steps_per_epoch=12, validation_data=valid_it, validation_steps=4, epochs=10)
+```
+
+
+```python
+make_predictions('data/presidential_doggy_door/valid/bo/bo_20.jpg')
+make_predictions('data/presidential_doggy_door/valid/bo/bo_20.jpg')
+presidential_doggy_door('data/presidential_doggy_door/valid/not_bo/131.jpg')
+presidential_doggy_door('data/presidential_doggy_door/valid/bo/bo_29.jpg')
+```
+### 결과 : 전이학습을 이용하면 작은데이터로도 좋은 성능의 모델을 만들 수 있다.
+
+</div>
+</details>
+
+
 <img width="803" alt="20195298_박준용" src="https://user-images.githubusercontent.com/79856225/172140056-2a099223-1118-4f85-8054-8308e8b7f6bd.png">
 
 
