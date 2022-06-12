@@ -778,6 +778,179 @@ presidential_doggy_door('data/presidential_doggy_door/valid/bo/bo_29.jpg')
 </div>
 </details>
 
+<details>
+<summary>8.시퀀스 데이터 </summary>
+<div markdown="1">  
+
+시퀀스 데이터의 예시를 위해 텍스트 문장을 사용한다. 기본적으로 언어는 문자가 모여 단어를 이루고 단어가 모여 문장을 이루는 형식의 시퀀스 데이터로 구성된다. 시퀀스 데이터의 또 다른 예로는 시간에 따른 주가와 날씨 데이터가 있다. 
+
+RNN 모델을 사용하기 위한 뉴욕타임즈의 헤드라인 데이터만을 로드
+```python
+import os 
+import pandas as pd
+
+nyt_dir = 'data/nyt_dataset/articles/'
+
+all_headlines = []
+for filename in os.listdir(nyt_dir):
+    if 'Articles' in filename:
+        # Read in all all the data from the CSV file
+        headlines_df = pd.read_csv(nyt_dir + filename)
+        # Add all of the headlines to our list
+        all_headlines.extend(list(headlines_df.headline.values))
+len(all_headlines)
+```
+
+컴퓨터가 이해할 수 있는방식으로 토큰화를 위해 필터링이후 토큰화진행
+
+
+```python
+# Remove all headlines with the value of "Unknown"
+all_headlines = [h for h in all_headlines if h != "Unknown"]
+len(all_headlines)
+
+from tensorflow.keras.preprocessing.text import Tokenizer
+
+# Tokenize the words in our headlines
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(all_headlines)
+total_words = len(tokenizer.word_index) + 1
+print('Total words: ', total_words)
+
+# Print a subset of the word_index dictionary created by Tokenizer
+subset_dict = {key: value for key, value in tokenizer.word_index.items() \
+               if key in ['a','man','a','plan','a','canal','panama']}
+print(subset_dict)
+
+tokenizer.texts_to_sequences(['a','man','a','plan','a','canal','panama'])
+```
+
+토큰화 과정이 끝났으면 각 단어를 표현숫자로 변환한다. 
+예를 들면 헤드라인 "nvidia launches ray tracing gpus"를 사용해 보면. 각 단어는 해당하는 숫자(예: nvidia - 5, launches - 22, ray - 94, tracing - 16, gpus - 102)로 대체되며 전체 시퀀스는 [5, 22, 94, 16, 102]가 된다.
+
+```python
+# Convert data to sequence of tokens 
+input_sequences = []
+for line in all_headlines:
+    # Convert our headline into a sequence of tokens
+    token_list = tokenizer.texts_to_sequences([line])[0]
+    
+    # Create a series of sequences for each headline
+    for i in range(1, len(token_list)):
+        partial_sequence = token_list[:i+1]
+        input_sequences.append(partial_sequence)
+
+print(tokenizer.sequences_to_texts(input_sequences[:5]))
+input_sequences[:5]
+```
+
+모든 시퀀스의 길이를 맞추기 위해 패딩단계를 거친다.
+
+```python
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+import numpy as np
+
+# Determine max sequence length
+max_sequence_len = max([len(x) for x in input_sequences])
+
+# Pad all sequences with zeros at the beginning to make them all max length
+input_sequences = np.array(pad_sequences(input_sequences, maxlen=max_sequence_len, padding='pre'))
+input_sequences[0]
+```
+
+예측변수및 타깃으로 분할한다
+
+```python
+# Predictors are every word except the last
+predictors = input_sequences[:,:-1]
+# Labels are the last word
+labels = input_sequences[:,-1]
+labels[:5]
+
+from tensorflow.keras import utils
+
+labels = utils.to_categorical(labels, num_classes=total_words)
+```
+
+이제 모델을 생성하는 과정이다. 
+1. 임베딩
+- 이 레이어는 토큰화된 시퀀스를 취하여 트레이닝 데이터세트의 모든 단어에 대한 임베딩을 학습하는 과정이며  개념상 임베딩의 목표는 피처의 일부나 전부의 차원 수를 줄이는 것이다.. 이 경우에는 각 단어를 벡터로 표현하며, 해당 벡터 내의 정보에 각 단어 간의 관계가 포함된다.
+
+2. LSTM
+- LSTM은 장기적인 정보를 학습하고 유지할 수 있는 특수한 유형의 순환 레이어이다.
+
+```python
+from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
+from tensorflow.keras.models import Sequential
+
+# Input is max sequence length - 1, as we've removed the last word for the label
+input_len = max_sequence_len - 1 
+
+model = Sequential()
+
+# Add input embedding layer
+model.add(Embedding(total_words, 10, input_length=input_len))
+
+# Add LSTM layer with 100 units
+model.add(LSTM(100))
+model.add(Dropout(0.1))
+
+# Add output layer
+model.add(Dense(total_words, activation='softmax'))
+
+model.summary()
+```
+
+이제 모델을 컴파일 하는과정이다 이때 옵티마이저로 아담을 사용한다 아담은 일반적으로 가장 좋은 성능을 가지고있다.
+
+```python
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+model.fit(predictors, labels, epochs=30, verbose=1)
+```
+
+이제 다음과 같은 코드로 예측을 해보자
+
+```python
+def predict_next_token(seed_text):
+    token_list = tokenizer.texts_to_sequences([seed_text])[0]
+    token_list = pad_sequences([token_list], maxlen=max_sequence_len-1, padding='pre')
+    prediction = model.predict_classes(token_list, verbose=0)
+    return prediction
+
+prediction = predict_next_token("today in new york")
+prediction
+```
+
+```python
+tokenizer.sequences_to_texts([prediction])
+
+def generate_headline(seed_text, next_words=1):
+    for _ in range(next_words):
+        # Predict next token
+        prediction = predict_next_token(seed_text)
+        # Convert token to word
+        next_word = tokenizer.sequences_to_texts([prediction])[0]
+        # Add next word to the headline. This headline will be used in the next pass of the loop.
+        seed_text += " " + next_word
+    # Return headline as title-case
+    return seed_text.title()
+```
+
+```python
+seed_texts = [
+    'washington dc is',
+    'today in new york',
+    'the school district has',
+    'crime has become']
+for seed in seed_texts:
+    print(generate_headline(seed, next_words=5))
+```
+
+### 결과 : 30에포크의 트레이닝 후에는 결과가 약간 안좋디만 대부분의 헤드라인이 문법적으로는 어느 정도 이해가 되지만 맥락적으로도 잘 이해가 되는 것은 아닙니다. 더 많은 에포크로 트레이닝하는 방법으로 결과를 개선시킬 수 있다.
+
+</div>
+</details>
+
 
 <img width="803" alt="20195298_박준용" src="https://user-images.githubusercontent.com/79856225/172140056-2a099223-1118-4f85-8054-8308e8b7f6bd.png">
 
