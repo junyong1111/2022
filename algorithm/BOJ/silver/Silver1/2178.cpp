@@ -47,12 +47,9 @@ void Find(vector<vector<int> >&Map, vector<vector<int> >&Distance,  queue<Point>
                         new_P.y = new_Y; 
                         Map[new_Y][new_X] = 0; //재탐색을 방지하기 위하여 이미 지나간 좌표는 벽으로 
                         Distance[new_Y][new_X] = Distance[P.y][P.x] +1; //이전 값 +
-                        Search.push(new_P); // 탐색 가능한 좌표 갱신
-                        
-                        
+                        Search.push(new_P); // 탐색 가능한 좌표 갱신        
                 }       
             }
-
         } // 네 방향 확인 
     } //while문
 }
