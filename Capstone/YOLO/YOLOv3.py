@@ -33,14 +33,9 @@ class_count = 50
 
 
 color_lists = np.random.uniform(0, 255, size= (len(classes), 3))
+
 layer_names = net.getLayerNames()
-
-
-
-# output_layers = ['yolo_82', 'yolo_94', 'yolo_106']
-### YOLO3
-output_layers = ['yolo_139', 'yolo_150', 'yolo_161']
-### YOLO4
+output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
 
 min_confidence = 0.3
 show_ratio = 1.0
