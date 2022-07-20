@@ -1,126 +1,94 @@
 #include <iostream>
+#include <queue>
 #include <vector>
 #include <algorithm>
-#include <queue>
 #include <cmath>
 
 using namespace std;
 
-int DAY;
+vector<vector<int> >Box(1001, vector<int>(1001, 0));
+// 토마토 박스정보
+queue<pair<int, int> >Q;
+
+
+int dx[4] = {-1,1, 0, 0};
+int dy[4] = {0, 0, -1, 1};
+// 4방향 탐색
+
+int N;
+int M;
 int MAX;
 
-int dx[4] = {-1,1,0,0};
-int dy[4] = {0,0,-1,1};
+void BFS(){
+    while(!Q.empty()){
+        int y = Q.front().first;
+        int x = Q.front().second;
+        Q.pop();
+        // 좌표 삽입
 
+        for(int i=0; i<4; i++){
+            // 4방향 탐색
+            int X = x + dx[i];
+            int Y = y + dy[i];
 
-typedef struct Point{
-    int x;
-    int y;
-}Point;
+            if((X>=0 && X<M) && (Y>=0 && Y<N)){
+                if(Box[Y][X] ==0){
+                    // 인덱스 범위 내에 있고 익지않은 토마토라면
+                    Box[Y][X] = Box[y][x] +1;
+                    // 하나씩 증가
+                    Q.push(make_pair(Y,X));
+                }
+            }
+        }
+    }
+}
 
-void print(vector<vector<int> >&Tomato, int N, int M);
-void BFS_TOMATO(vector<vector<int> >&Tomato, vector<vector<int> >&Distance ,queue<Point>&Q);
-int findAnswer(vector<vector<int> >&Tomato);
+int findAnswer(){
+    for(int i=0; i<N; i++){
+        for(int j=0; j<M; j++){
+            if(Box[i][j] ==0 )
+            // 익지않은 토마토가 하나라도 있다면 답없음
+                return 1;
+            if(MAX < Box[i][j]){
+                MAX = Box[i][j];
+            }
+            // 맥스값 갱신
+        }
+    }
+    return 0;
+}
 
-int main(){
+int main(){ 
     ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
 
-    // freopen("input.txt", "r" ,stdin);
+    // freopen("input.txt", "r", stdin);
+    
+    int n,m = 0;
+    cin >> m >> n;
 
-    int N,M = 0;
-    cin >> M >> N ;
-    vector<vector<int> >Tomato(N, vector<int>(M, 0));
-    vector<vector<int> >Distance(N, vector<int>(M, 0));
-    Point P;
-    queue<Point>Q;
-    vector<Point>MAP;
+    N = n;
+    M = m;
 
-    for(int i=0; i<N; i++)
-        for(int j=0; j<M; j++){
-            cin >> Tomato[i][j];
-            if(Tomato[i][j] ==1){
-                P.x = j;
-                P.y = i;
-                MAP.push_back(P);
-            }
-        }
-
-    for(vector<Point>::iterator it = MAP.begin(); it!= MAP.end(); it++){
-        P.x = it->x;
-        P.y = it->y;
-        MAX = 0;
-        Q.push(P);
-        BFS_TOMATO(Tomato,Distance, Q);
-        DAY = DAY+2;
-        // print(Distance, N, M);
-        // cout <<"\n";
+  for(int i=0; i<N; i++){
+    for(int j=0; j<M; j++){
+        int temp = 0;
+        cin >> temp ;
+        // 익은 토마토가 나온다면 큐에 삽입
+        if(temp==1)
+            Q.push(make_pair(i,j)); //y먼저 삽입
+        Box[i][j] = temp;
     }
-    if(findAnswer(Tomato)){
-        return -1;
-    };
-    cout << MAX << "\n";
-    return 0;
-}
+  }
+BFS();
+// BFS탐색 시작
 
+if(findAnswer())
+    cout << -1 <<"\n";
 
-void print(vector<vector<int> >&Tomato, int N, int M){
-    for(int i=0; i<N; i++){
-        for(int j=0; j<M; j++)
-            cout << Tomato[i][j] << " ";
-        cout << "\n";
-    }
-} //테스트용
+else
+    cout << MAX-1 <<"\n";
 
-void BFS_TOMATO(vector<vector<int> >&Tomato,vector<vector<int> >&Distance, queue<Point>&Q){
-    if(!Q.empty()){
-        Point P1;
-        P1.x = Q.front().x;
-        P1.y = Q.front().y;
-        Q.pop();
-        int N = Tomato.size();
-        int M = Tomato[0].size();
-
-        for(int i=0; i<4; i++){
-
-            // 4방향 탐색
-            Point P2;
-            P2.x = P1.x + dx[i];
-            P2.y = P1.y + dy[i];
-
-            if( (P2.x >=0 && P2.x < M) && (P2.y >=0 && P2.y <N) ){
-                // 인덱스 범위안에 있다면
-                if(Tomato[P2.y][P2.x]==DAY){ 
-                    Tomato[P2.y][P2.x] = DAY+2;
-                    if(Distance[P2.y][P2.x]!=0){
-                    Distance[P2.y][P2.x] = min(Distance[P1.y][P1.x]+1,Distance[P2.y][P2.x]);
-                    }
-                    else{
-                        Distance[P2.y][P2.x] = Distance[P1.y][P1.x] +1;
-                    }
-                    if(MAX <=Distance[P2.y][P2.x] ){
-                        MAX = Distance[P2.y][P2.x];
-                    }
-                    Q.push(P2);
-                }
-            }
-            
-        }
-        BFS_TOMATO(Tomato, Distance, Q);
-        
-    }
-}
-
-int findAnswer(vector<vector<int> >&Tomato){
-    int N = Tomato.size();
-    int M = Tomato[0].size();
-
-    for(int i=0; i<N; i++)
-        for(int j=0; j<M; j++)
-            if(Tomato[i][j] ==0)
-                return 1;
-        
-                
     return 0;
 }

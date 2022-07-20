@@ -6,9 +6,11 @@ using namespace std;
 
 typedef long long ll;
 
-ll  DP[101];
+ll  DP[101]; 
+// 오버플로우 방지
 
 ll P(int N);
+// 오버플로우 방지
 
 int main(){
     ios::sync_with_stdio(false);
@@ -23,6 +25,8 @@ int main(){
     DP[3] = 1;
     DP[4] = 2;
     DP[5] = 2;
+
+    // 5번까지 미리 삽입
  
     int testCase = 0;
     cin >> testCase ;
@@ -43,6 +47,7 @@ ll P(int N){
     }
     else{
         DP[N] = P(N-1) + P(N-5);
+        // DP[N] = DP[N-1] + DP[N-5]의 패턴
         return DP[N];
     }
 }
