@@ -18,7 +18,7 @@ void DFS(vector<int>Graph[], vector<int>&Visit, stack<int>&S){
         }
     }
 }
-// ㅇㄹㄴ연산
+// DFS연산
 
 int main(){
     ios::sync_with_stdio(false);
