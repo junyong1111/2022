@@ -1,16 +1,3 @@
-## 정렬
-
-- K번째수 (Level_1)
-
-### 문제에서 주어진 조건에 맞게 벡터를 복사 후 정렬하며 쉽게 해결이 가능한 문제이다.
-
-- 가장 큰 수 (Level_2)
-
-### 테스트 케이스는 모두 통과하였지만 채점 결과는 참담하다... 어떤식으로 해결해야할지... 
-
-### 실패 코드
-```c++
-//실패 코드
 #include <string>
 #include <vector>
 #include <iostream>
@@ -82,4 +69,3 @@ string solution(vector<int> numbers) {
     
     return answer;
 }
-```
