@@ -83,3 +83,7 @@ string solution(vector<int> numbers) {
     return answer;
 }
 ```
+
+### 성공
+- 단순하게 string 값을 더하는 조건식을 세우면 되는거였는데 너무 복잡하게 생각하려고 했다....
+ex)  [30, 3] -> a+b = 303 , b+a = 330 으로 쉽게 식을 세울 수 있었음..
