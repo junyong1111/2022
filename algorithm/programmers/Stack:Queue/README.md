@@ -19,3 +19,42 @@
 - 주식가격 (Level_2)
 
 ###  스택과 큐를 이용하여 구현하는 문제인데 사용하지않고도 해결가능 어려운 문제는 아닌듯하다.
+
+- 다리를 지나는 트럭 (Level_2)
+
+###  큐를 이용하는 문제처럼 보이는데 구현이 쉽지않다 실패원인을 찾아야함
+
+### 실패코드
+```c++
+//실패 코드 ... 뭐가 잘못된걸까
+
+#include <string>
+#include <vector>
+#include <queue>
+#include <iostream>
+
+using namespace std;
+
+int solution(int bridge_length, int weight, vector<int> truck_weights) {
+    int answer = 1;
+    
+    int len = bridge_length;
+    
+    
+    
+    for(int i=0; i<truck_weights.size()-1; i++){
+        int temp = truck_weights[i] + truck_weights[i+1];
+        if(temp <= weight){
+            answer ++;
+        }
+        else{
+            answer = answer + len;
+        }
+    }
+    
+    answer = answer + len;
+    
+    
+    return answer;
+}
+```
