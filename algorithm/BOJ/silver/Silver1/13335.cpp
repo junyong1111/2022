@@ -1,0 +1,61 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    // freopen("input.txt", "r", stdin);
+    int numOftrucks = 0;
+    int bridge_len = 0;
+    int weight = 0;
+
+    cin >> numOftrucks >> bridge_len >> weight;
+
+    vector<int>Trucks(numOftrucks,0);
+
+    for(int i=0; i<numOftrucks; i++)
+        cin >> Trucks[i];
+
+    queue<int>wait;
+    queue<int>passing;
+    int len = bridge_len;
+
+    for(int i=0; i<len; i++)
+        passing.push(0);
+    // 주어진 다리 길이에 맞게 최초 0을 삽입한 큐 생성
+    
+    for(auto t : Trucks)
+        wait.push(t);
+    // 트럭 정보 입력
+    int answer = 0;
+    int W = 0;
+    int temp = 0;
+    // 정답과 현재 다리의 총 무게, 건너야하는 트럭 정보 변수 선언 
+    
+    while(!wait.empty()){ //대기 트럭이 있는동안 반복
+        answer ++;
+        // 1초가 지나고 
+        
+        temp = wait.front();    //대기 트럭 정보 저장  
+        W = W-passing.front();   // 다리를 건넌 트럭은 무게에서 제외 
+        passing.pop(); // 다리에 제일 선두에 있는 트럭 제거
+        
+        if( W + temp  <= weight){ // 현재 다리 총 무게 + 대기 트럭이 건널 수 있으면 
+            W = W+temp; wait.pop();  // 대기 트럭 다리에 올리고 
+            passing.push(temp); //한 칸 전진
+        }
+        else{
+            passing.push(0); // 만약 대기 트럭을 못 올린다면 0으로 채움 
+        }
+    } //while
+    
+    answer = answer + bridge_len; //마지막 트럭만 보내면 끝임
+
+    cout << answer <<"\n";    
+    return 0;
+}
