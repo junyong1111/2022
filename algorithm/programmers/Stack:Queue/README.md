@@ -58,3 +58,8 @@ int solution(int bridge_length, int weight, vector<int> truck_weights) {
     return answer;
 }
 ```
+
+### 성공
+
+트럭이 전진함에 있어서 만약 다음 트럭이 지나갈 수 없다면 큐에 0을 채워넣는 방법으로 문제를 간단하게 해결할 수 있었다.
+
