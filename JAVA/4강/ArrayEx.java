@@ -7,5 +7,13 @@ public class ArrayEx{
         int [] arr3 = {1,2,3,4};
         
         // 선언과 동시에 초기화하는 2가지 방법
+
+
+        int [] Arr = new int[100];
+
+        for(int i=0; i<100; i++){
+                Arr[i] = i;
+        }
+        
     }
 }

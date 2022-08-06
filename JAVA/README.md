@@ -367,12 +367,324 @@ for(type값을 받아줄 변수 이름 : 출력하고 싶은 자료구조)
 <summary> 5강 클래스 </summary>
 <div markdown="1">
 
+### 객체지향 언어
+
+- 프로그램을 구성하는 요소는 객체이며 이것이 상호작용 하도록 프로그래밍
+- 클래스 : 객체를 만들기 위한 틀
+
+ex) 객체 : 붕어빵
+
+클래스 : 붕어빵 틀
+
+```java
+public class Car{
+	
+}
+
+public class CarEx{
+	public static void main(String [] args){
+		Car c1 = new Car(); 
+// new를 사용하여 객체를 만들어야 함
+	}
+}
+```
+
+### 자바에는 2가지 타입이 존재한다.
+
+1. 기본형 타입
+    - 논리형, 문자형, 정수형, 실수형
+2. 참조형 타입
+    - 기본형을 제외한 모든 타입
+
+```java
+int i = 4; //기본형 타입
+String str = new String("HELLO"); //참조형 타입
+```
+
+ new라는 키워드는 메모리에 올려달라는 의미이다 c에서 동적할당과 같은 개념이며 이렇게 메모리에 올라간 클래스를 **인스턴스**라고 말한다.
+
+메모리에 올라간 인스턴스를 가리키는 변수 = 참조하는 변수 = 레퍼런스하는 변수  모두 같은 말이다. 
+
+- 인스턴스를 가지고 있는게 아니라 가리키고 있다는 의미이다 즉 **포인터**
+
+### 클래스는 모두 참조형이다
+
+String은 자바에서 가장 많이 사용하는 클래스이다.
+
+### 특징 1. String은 예외적은 new연산자 없이도 생성이 가능하지만 약간의 차이가 있다.
+
+```java
+String str1 = "Hello"; // ->상수영역에있는 Hello를 가르키고 있다.
+String str2 = "Hello"; // ->상수영역에있는 Hello를 가르키고 있다.
+String str3 = new String("Hello"); //상수영역에 있는걸 참조하는게 아니라 새롭게 힙영역에 생성한다.
+
+////////////////////// 차이점 비교 ////////////////////
+if(str1==str2) --> true 둘은 상수영역에 있는 같은 레퍼런스를 참조하고 있다 
+if(str1 == str3) --> false str1은 상수영역 str3은 힙영역에 새롭게 생성된 인스턴스이다.
+```
+
+사람이 보기에는 같은 Hello이지만 자바는 new로 생성된 string과 그냥 생성된 string을 다르게 생각한다.
+
+### 특징 2. String은 다른 클래스와 다르게 한 번 생성된  클래스는 변하지 않는다.
+
+```java
+// str1.을 이용하여 메서드 확인
+System.out.println(str1.substring(3)); //3번 인덱스부터 잘라져서 보여짐
+System.out.println(str1); // 내부의 값은 변하지 않음
+// 즉 수행하기 전에 새로운 스트링을 만들어서 반환한다고 생각하면 된다.
+```
+
+### 클래스의 구성요소 : 필드
+
+ex)
+
+객체 : 자동차 
+
+필드 : 자동차의 구성요소 (속성)
+
+1. 차 이름
+2. 차량번호
+
+객체 : 학생
+
+필드 : 학생의 구성요소(속성)
+
+1. 이름
+2. 번호
+
+```java
+public class Car{
+	String name;
+	int number;
+}
+//자동차 클래스 생성
+
+public static void main(String[] args){
+	Car c1 = new Car();
+	Car c2 = new Car();
+	
+	c1.name = "소방차";
+	c1.number = 1234;
+
+	c2.name = "구급차";
+	c2.number = 1111;
+// 자동차 객체를 생성한 후 속성 값 삽입
+
+	System.out.println(c1.name);
+	System.out.println(c1.number);
+// c1 객체 확인
+	System.out.println(c2.name);
+	System.out.println(c2.number);
+// c2 객체 확인
+}
+```
+
+**각각**의  자동차 **객체 생성**되었고 각자 다른값이 들어있는걸 확인할 수 있다.
+
+### 객체 지향 언어 : 하나의 사물을  하나의 클래스로 설명
+
+- 사물
+    - 상태 → 필드
+        - 이름, 차량번호
+    - 행동 → 메소드
+        - 전진,후진
+
+- 메소드 :  함수와 같다 입력값 —> 결과값
+    - 입력값 : 매개변수(인자)
+    - 결과값 : 리턴값 (반환값)
+
+- 메소드 : 클래스가 가지고 있는 기능
+
+public 리턴타입(ex int) 메소드 이름(매개변수){
+	구현
+}
+
+### 다양한 메소드 선언
+
+```java
+public void method1(){ //리턴값이 없다면 void를 사용
+	System.out.println("mthod1이 실행됨");
+}
+
+public void method2(int value){ //정수형 인자를 받음
+	System.out.println(value + "method2가 실행됨");
+}
+
+public int method3(){
+	System.out.println("method3이 실행됨");
+	return 10;
+} // 리턴값을 설정했으니 리턴값을 줘야함
+
+public void method4(int x, int y){ //여러개의 인자를 받음
+		System.out.println(x+y + "method4가 실행됨");
+}
+
+public int method5(int x){ //정수형 인자를 받음
+		System.out.println(x + "method5가 실행됨");
+		return x*2;
+} // 받은 인자를 이용하여 리턴
+```
+
+선언한 메소드 사용 
+
+- 위에 클래스를 생성했다고 가정하고 진행(Myclass)
+- 실행 시 선언했던 조건을 맞춰줘야 한다.
+
+```java
+public static void main(String [] args){
+		Myclass myclass = new Myclass();
+		// myclass.을 이용하여 메소드 접근가능
+		myclass.method1();
+
+		myclass.method2(10); //정수형을 무조건 넣어줘야 한다.
+
+		int value = myclass.method3(); //리턴값을 받아낼 변수가 필요
+		System.out.println(value);  //받은 값 확인
+
+		myclass.method4(3,4); //2개의 정수값을 인자로
+
+		int value1 = myclass.method5(10); //정수 인자를 이용하여 리턴값 받음
+		System.out.println(value1); //확인
+}
+```
+
+### 필요한 클래스를 구현하는 방법도 있지만 이미 만들어진 클래스들을 이용할 수 있다.
+
+자주 사용하는 String 클래스의 메소드 확인
+
+```java
+public static void main(String[] args){
+    String str = "Hello";
+    str.length(); // 문자열의 길이를 반환해주며 공백도 하나의 문자로 인식한다.
+    str.concat(" World"); // 문자열을 더해준다 -> Hello World
+    /* 
+        이때 str을 확인해보면 Hello World가 아닌 Hello로 나온다. 
+        즉 concat을 사용하면 새롭게 생성한 String Hello World를 반환하다.
+    */
+    str = str.concat(" World"); // 이 처럼 사용해야 str값이 변환된다.
+
+    str.substring(3); //3번 인덱스부터 잘라준다.
+    str.substring(3,6); // 3번부터 6번까지 인덱스를 잘라준다.    
+    }
+```
+
+### 변수의 사용범위 : 변수가 선언된 블록
+
+```java
+public class VariableScopeExam{
+	int globalscope = 10;
+	
+	public void scopeType1(int value){
+		int localscope =20;
+		globalscope = value; //가능
+		localscope = 40; //가능
+	}
+	
+	public void scopeType2(int value){
+		globalscope = value; //가능
+		localscope = 40; //불가능
+	}
+	
+	public static void main(String[] args){
+		globalscope = 100; //불가능
+		localscope = value; //불가능
+	}
+}
+```
+
+### 모든 클래스는 인스턴스화 하지 않은 채로 사용할 수 없다.
+
+- 붕어빵틀 ≠ 붕어빵
+
+### **static** 키워드를 사용하면 인스턴스화(객체를 생성) 하지않아도 사용이 가능하다.
+
+```java
+public class VariableScopeExam{
+	int globalscope = 10;
+	static int staticValue = 10;
+	
+	public void scopeType1(int value){
+		int localscope =20;
+		globalscope = value; //가능
+		localscope = 40; //가능
+	}
+	
+	public void scopeType2(int value){
+		globalscope = value; //가능
+		localscope = 40; //불가능
+	}
+	
+	public static void main(String[] args){
+		globalscope = 100; //불가능
+		localscope = value; //불가능
+		staticValue = 20 // 가능
+	
+		VariableScopeExam v1 =new VariableScopeExam();
+		VariableScopeExam v2 =new VariableScopeExam();
+		v1.globalscope = 100; 
+		v2.globalscope = 200;
+	// 위처럼 객체를 생성해서 사용해야 하며 각각 다른객체 이므로 다른값이 들어간다.
+		v1.staticValue = 100;
+		v2.staticValue = 200;
+	// static 필드는 값을 공유하므로 두 객체는 같은값을 가지고 있다.
+	}
+}
+```
+
+### 클래스 변수
+
+- static한 변수, 값을 저장할 수 있는 공간이 하나뿐이여서 값을 공유한다.
+- 클래스 이름을 직접 사용하는 것이 가능하다.
+    - 클래스이름.클래스변수명
+    
+    ex)  VariableScopeExam.staticValue
+    
+
+### 글로벌 변수를 선언할 때 static을 사용하면 되는것인가?!
+
+### JDK5에서 추가된 문법이다 (enum)
+
+- 기존 사용방식
+
+```java
+public class EnumEx{
+	public static final String MALE ="MALE";
+	public static final String FEMALE ="FEMALE";
+	
+	public static void main(String [] args){
+		String gender1; //MALE 과 FEMAL 둘 중 하나의 값을 넣고싶음
+		gender1 = EnumEx.MALE;
+		gender1 = EnumEx.FEMALE;
+		gender1 = "boy"; //하지만 다른 string 값이 들어와도 오류를 발생시키지 않는다.
+	
+		Gender gender2;
+		gender2 = Gender.MALE;
+		gender2 = Gender.FEMALE;
+		gender2 = "boy"; //에러 
+	}
+enum Gender{
+		MALE,FEMALE; 
+	}
+}
+```
+
+위처럼 특정 값만 사용할 때는 열거형을 사용하면 좋다
+
+- 다른값이 들어왔을 때 오류가 생길 수 있을때 사용하면 좋아보인다.
+
 </div>
 </details>
 
 ### ----------------------------->5강 클래스
 
+<details>
+<summary> 6강 클래스 다듬기 </summary>
+<div markdown="1">
 
+</div>
+</details>
+
+### ----------------------------->6강 클래스 다듬기
 
 
 

@@ -8,5 +8,7 @@ public class ArrayEx2 {
         int [][] arr1 = new int[3][];
         arr1[0][0] =10; // 불가능
         arr1[0] = new int[10]; 
+
+        
     }    
 }
