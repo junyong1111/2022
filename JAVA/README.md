@@ -689,11 +689,124 @@ enum Gender{
 <summary> 6강 클래스 다듬기 </summary>
 <div markdown="1">
 
+### new 연산자를 사용하면 반드시 생성자가 나와야 함
+
+1. 리턴 타입이 없다.
+2. 매개 변수가 없는 생성자를 기본생성자라 하고 자동으로 만들어진다.
+→ 생성자를 하나라도 만든다면 기본생성자는 만들어지지 않는다.
+
+```java
+public class Car{
+	String name;
+	int Number;
+}
+Car c1 = new Car(); 
+// car()이 부분이 생성자이다.
+
+// 위 처럼 아무런 생성자를 만들지 않는다면 자동으로 만들어진다.
+
+public Car(String n){
+	name = n;
+}
+
+Car c1 = new Car();  //오류
+Car c1 = new Car("소방차"); 
+// Car라는 객체가 생성되면서 매개변수를 이용하여 생성되며 기본생성자는 만들어지지 않는다.
+```
+
+객체가 만들어지면서 기본적으로 부여할 속성이 있다면 생성자를 잘 이용하면 될듯 하다.	
+
+### 객체 자신을 참조하는 This
+
+```java
+public Car(String name){
+	name = name
+} //이름이 똑같기 때문에 컴파일러는 동일한 값을 가르킨다.
+
+public Car(String name){
+	this.name = name;
+}
+// 객체 자신을 참조하는 this를 이용!!
+```
+
+
+### 메소드 오버로딩을 사용하면 매개변수의 수, 타입이 다른경우에 동일한 이름의 메소드를 여러개 정의할 수 있다.
+
+1. 정수 2개를 받아 그 합을 리턴하는 메소드
+2. 정수 3개를 받아 그 합을 리턴하는 메소드
+3. 문자열 2개를 받아 그 합을 리턴하는 메소드
+
+위 예시 처럼 각각 **타입**과 **매개변수의 수**가 다른경우 사용이 가능하다.
+
+```java
+public int plus(int x, int y){
+	return x+y;
+} // int 타입과 int형 매개변수 2개
+
+public int plus(int x, int y, int z){
+	return x+y+z;
+} // int 타입과 int형 매개변수 3개
+
+public String plus(String x, String y){
+	return x+y;
+} // String 타입과 String 형 매개변수 2개
+```
+
+### 생성자도 메소드와 마찬가지로 여러개로 생성이 가능하며 이를 생성자 오버로딩이라 한다.
+
+```java
+Car c1 = new Car("소방차");
+Car c2 = new Car(); // 기본 생성자는 다른 생성자가 있으면 자동으로 생성되지 않는다.
+```
+
+기본생성자를 사용하고 싶다면 마찬가지로 미리 정의해둬야 한다.
+
+### this() : 자신의 생성자를 이용하여 초기화 가능
+
+- 자신이 정의해둔 **생성자 조건에 맞게** 선언해야한다.
+
+```jsx
+public car(){
+	//this.name = "이름없음"
+	//this.Number = 0;
+	this("이름없음", 0); 
+// 아래에 있는 생성자를 이용하여 초기화 가능
+
+} //기본 생성자 오버로딩
+
+public car(String name, int Number){
+	this.name = name;
+	this.Number = Number;
+} // 생성자 오버로딩
+```
+### 패키지 : 서로 관련이 있는 클래스 또는 인터페이스들을 묶어 놓은 묶음
+
+- 파일들이 많아지면 관련있는 파일끼리 묶어 하나의 폴더에 보관한다.
+- package 이름은 대부분 도메인 이름을 **거꾸로 적은 후 프로젝트 이름을 붙여 사용한다.**
+- 패키지가 있는 클래스를 사용할 때는 import를 이용
+- 패캐지 이름은 숫자로 시작할 수 없다.
+
+```java
+package 패키지명;
+// import 패키지명.*;을 이용하여 사용하여야 한다.
+public class 클래스 이름{
+	...
+}
+```
+
 </div>
 </details>
 
 ### ----------------------------->6강 클래스 다듬기
 
+<details>
+<summary> 7강 상속 </summary>
+<div markdown="1">
+
+</div>
+</details>
+
+### ----------------------------->7강 상속
 
 
 
