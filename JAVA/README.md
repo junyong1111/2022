@@ -803,12 +803,614 @@ public class 클래스 이름{
 <summary> 7강 상속 </summary>
 <div markdown="1">
 
+### 상속 : 부모가 가지고 있는것을 자식이 물려받는 것
+
+- 노트북은 컴퓨터의 한 종류이다.
+- 침대는 가구의 한 종류이다.
+- **extends** 키워드를 사용
+
+```java
+public class Car{
+	public void run(){
+		System.out.prinlnt("달리다");
+	}
+} //기존의 Car클래스
+
+public class Bus extends Car {
+	public void ppangppang(){
+		System.out.println("빵빵");
+	}
+}
+
+public static void main(String [] args){
+	Bus bus = new Bus();
+	bus.run(); 
+	bus.ppangppang();
+// Bus클래스에는 run 메소드가 없지만 Car 클래스를 상속받았으므로 Car의 run메소드 사용가능.
+// 뿐만 아니라 자신의 메소드도 사용가능하다 
+	Car car = new Car();
+	car.run();
+	car.ppangppang(); //오류
+// 부모 클래스인 Car는 자신의 메소드인 run()메소드는 사용가능하지만 자식의 메소드는 사용이 불가능하다.
+
+}
+```
+
+**자식은 상속받은 부모의 메소드를 모두 사용가능하지만 부모는 자식의 메소드를 사용할 수 없다.**
+
+### 클래스
+
+1. 필드
+2. 메소드
+
+### 캡술화 : 관련된 내용을 모아서 가지고 있는 것
+
+- **public** **→** 전체 허용 누구든지 가능하다.
+- **protected →** 같은 패키지인 경우 접근 허용하며 다른 패키지라도 상속을 받은 경우 접근 허용
+- **default접근 제한자 ->** 자기 자신과 같은 패키지만 허용
+- **private →** 자기 자신만 접근 가능
+
+**public > protected > default > private**
+
+```java
+public int p = 3  //-> 누구든지 접근가능
+protected int p2 = 4; // -> 같은 패키지인 경우 접근 허용하며 다른 패키지라도 상속을 받은 경우 접근 허용
+int k =2 ; // default접근 제한자 -> 자기 자신과 같은 패키지
+private int i = 1; //자기 자신만 접근 가능
+
+```
+
+```java
+public abstract class Bird{
+	public abstract void sing(); //각각 새마다 울음소리가 다르다.
+	public void fly(){
+		System.out.println("날다");
+	}
+}
+
+public class Duck extends Bird{
+	@Override
+	public void sing(){
+		System.out.println("꽥꽥");
+	} // 추상 클래스에서 상속받은 추상메소드 sing을 구현해야 함.
+}
+
+public static void main(String [] args){
+	Duck duck = new Duck();
+	duck.sing();
+	duck.fly();
+	
+//	Bird bird = new Bird(); // 추상클래스는 객체로 생성할 수 없다.
+}
+```
+
+### Super  : 부모 객체를 나타내는 키워드
+
+- **Class가 인스턴스화(객체화) 될 때 생성자가 실행되면서 객체의 초기화를 한다. 그 때 자신의 생성자만 실행이 되는것이 아니고, 부모의 생성자부터 실행된다.**
+- **super() 를 사용하여 부모의 기본생성자를 호출이 가능하다**
+    - 이 때 부모의 생성자가 기본생성자가 아닌경우 자동으로 호출이 되지않고 사용자가 따로 정의해줘야 한다.
+
+```java
+public class Car{
+/*	public Car(){
+		System.out.println("Car의 기본생성자");
+	}
+*/  //기본생성자의 경우
+
+	public Car(String name){
+		System.out.println("Car의 생성자");
+	}
+}
+// 기본생성자가 아닌경우
+
+public class truck extends Car{
+	public Truck(){
+		// super(); //부모의 생성자를 이야기함 직접 부르지않아도 자동으로 불러진다.
+		super("소방차"); // 부모의 기본생성자가 없는경우 생성자에 맞게 호출해줘야 한다.
+		System.out.println("Trcuk의 기본생성자");
+	}
+}
+
+public static void main(String [] args){
+	Truck truck  = new Truck();
+// 이때 Car의 기본생성자와 트럭의 기본생성자가 실행된다.
+}
+```
+
+**자식이 태어나기 위해서는 먼저 부모가 태어나야 한다!!**
+
+### 오버라이딩(Overriding)
+
+- **부모**가 가지고 있는 메소드와 똑같은 모양의 메소드를 자식이 가지고 있는것이다.
+
+즉 오버라이딩이란 **메소드를 재정의** 하는것이다.
+
+- **오버로딩** :  한 클래스내에서 **동일한 이름**의 메소드를 **여러개 정의**하는 것
+- **오버라이딩** : **부모의 메소드**를 **재정의** 하는 것
+- **super 키워드를 이용하여 부모의 메소드를 사용할 수 있다.**
+
+```java
+public class Car{
+	public void run(){
+		System.out.println("Car의 run메소드");
+	}
+}
+
+public class Bus extends Car{
+		public void run(){
+				super.run() //부모의 메소드를 호출하고 싶을때 
+				System.out.println("Bus의 run메소드");
+			}
+	}
+
+public static void main(String [] args){
+	Bus bus = new Bus();
+	Car car = new Car();
+	bus.run();
+	car.run();
+}
+```
+
+### 부모타입으로 자식개체를 참조하게 되면 부모가 가지고 있는 메소드만 사용할 수 있다. 자식객체가 가지고 있는 메소드나 속성을 사용하고 싶다면 형변환 해야한다.
+
+- 부모타입으로 자식을 가리킬 수 있지만 부모가 가지고 있는 내용만 사용가능하다.
+- 자식의 내용을 사용하고 싶으면   자식 클래스로 형변환 해야한다.
+    - 큰 그릇 → 작은 그릇 (가능) ,  부모 → 자식(가능)
+    - 작은 그릇 → 큰 그릇(불가능),  자식 → 부모(불가능)
+
+```java
+public class Car{
+	public void run(){
+		System.out.println("Car의 run메소드");
+	}
+}
+
+public class Bus extends Car{
+		public void ppangppang(){
+			System.out.println("빵빵");
+		}
+}
+
+public static void main(String [] args){
+		Car c = new Bus(); //부모가 자식을 가르킬 수 있지만 메소드는 사용이 불가능하다.
+		c.run(); //가능
+		//c.ppangppang(); //불가능
+
+		Bus bus = (Bus)c;
+		bus.run();
+		bus.ppangppang();
+}
+```
+
+### 명시적으로 형변환 시켜주면 된다!
+
 </div>
 </details>
 
 ### ----------------------------->7강 상속
 
 
+<details>
+<summary> 8강 인터페스와 다른 형식의 클래스 </summary>
+<div markdown="1">
+
+### 인터페이스 : 서로 관계가 없는 물체들이 ****상호 작용을 하기 위해서 사용하는 장치나 시스템****
+
+- TV는 어떤 기능이 있어야할까 ?
+    1. 켜기/끄기
+    2. 볼륨 조절
+    3. 채널 변경
+- **interface** 키워드를 이용
+
+```java
+public interface TV{
+		public int MIN_VOL = 0;
+		public int MAX_VOL = 100;
+		public void turnOn(); //추상메소드와 비슷하게 선언
+		public void turnOff();
+		public void chagneVolume(int volume);
+		public void chagneChannel(int channel);
+}
+```
+
+### 인터페이스는 사용할때 해당 인터페이스를 구현하는 클래스에서 implements 키워드를 이용한다.
+
+- LedTV는 TV가 가지고있는 모든 메소드를 구현해야 한다.
+
+```java
+public interface TV{
+		public int MIN_VOL = 0;
+		public int MAX_VOL = 100;
+		public void turnOn(); //추상메소드와 비슷하게 선언
+		public void turnOff();
+		public void chagneVolume(int volume);
+		public void chagneChannel(int channel);
+}
+public class LedTV implements TV{
+		public void turnOn(){
+		System.out.println("전원ON");
+}
+		public void turnOff(){
+		System.out.println("전원OFF");
+}
+		public void chagneVolume(int volume){
+		System.out.println("볼륨 조절");
+}
+		public void chagneChannel(int channel){
+		System.out.println("채널 변경");
+}
+}
+
+public static void main(String [] args){
+	Tv tv = new LedTV();
+	tv.turnOn();
+	tv.turnOff();
+	tv.turnchangeVolume(10);
+	tv.turnchangeChannel(20);
+}
+```
+
+- 참조변수의 타입으로 인터페이스를 사용할 수 있다. 또한 인터페이스가 가지고 있는 메소드만 사용가능
+- 만약 TV인터페이스를 구현하는 LcdTV를 만들었다면 위의 코드에서 new LedTV부분만 new LcdTV로 변경해도 똑같이 프로그램이 동작할 것다. 동일한 인터페이스를 구현한다는 것은 클래스 사용법이 같다는 것을 의미한다.
+- 클래스는 이러한 인터페이스를 여러개 구현할 수 있다
+
+### Java 8부터는 dafault 메소드와 static 메소드를 정의할 수 있도록 변경되었다.
+
+```java
+public interface Calculator {
+        public int plus(int i, int j);
+        public int multiple(int i, int j);
+        default int exec(int i, int j){      //default로 선언함으로 메소드를 구현할 수 있다.
+            return i + j;
+   }
+				public static int exec2(int i, int j){   //static 메소드 
+				            return i * j;
+				        } //호출시 인터페이스명.메소드이름으로 사용해야함
+ }
+
+public class MyCalculator implements Calculator {
+
+        @Override
+        public int plus(int i, int j) {
+            return i + j;
+        }
+
+        @Override
+        public int multiple(int i, int j) {
+            return i * j;
+        }
+    }
+
+public class MyCalculatorExam {
+        public static void main(String[] args){
+            Calculator cal = new MyCalculator();
+            int value = cal.exec(5, 10);
+            System.out.println(value);
+        }
+    }
+```
+
+### ****내부 클래스: 클래스 안에 선언된 클래스며 위치에 따라 4가지 형태가 있다.****
+
+1. 중첩 클래스 (인스턴스 클래스)
+
+```java
+public class InnerExam{
+	class Cal{ //중첩 클래스 
+						int value = 0;
+            public void plus(){
+            value++;
+			}
+	}
+}
+
+public static void main(String [] args){
+	InnerExam ex = new InnerExam(); //상위 클래스를 미리 선언
+	InnerExam.Cal cal = new ex.new Cal();
+	cal.plus();
+}
+```
+
+내부 클래스를 사용하려면 그 상위 클래스를 먼저 선언해줘야 한다.
+
+1. 정적 중첩 클래스 (스태틱 클래스)
+
+```java
+public class InnerExam2{
+        static class Cal{ //정적 중첩 클래스
+            int value = 0;
+            public void plus(){
+                value++;
+            }
+        }
+
+        public static void main(String args[]){
+            InnerExam2.Cal cal = new InnerExam2.Cal();
+            cal.plus();
+            System.out.println(cal.value);
+
+        }
+    }
+```
+
+스태틱한 클래스이므로 그 상위 클래스를 선언해줄 필요가 없다.
+
+1. 지역 중첩 클래스 (지역 클래스)
+
+```java
+public class InnerExam3{
+        public void exec(){ //메소드 안에서 선언되는 지역 중첩 클래스
+            class Cal{
+                int value = 0;
+                public void plus(){
+                    value++;
+                }
+            }
+            Cal cal = new Cal();
+            cal.plus();
+            System.out.println(cal.value);
+        }
+
+        public static void main(String args[]){
+            InnerExam3 t = new InnerExam3();
+            t.exec();
+        }
+    }
+```
+
+**익명 클래스** : ****익명 중첩 클래스는 익명 클래스라고 보통 말하며, 내부 클래스이기도 하다.****
+
+1. 익명 중첩 클래스
+
+```java
+//추상클래스 Action 
+    public abstract class Action{
+        public abstract void exec();
+    }
+
+    //추상클래스 Action을 상속받은 클래스 MyAction
+
+    public class MyAction extends Action{
+        public void exec(){
+            System.out.println("exec");
+        }
+    }
+
+// 원래 추상클래스를 구현하던 방식
+
+    //MyAction을 사용하는 클래스 ActionExam 
+    public class ActionExam{
+        public static void main(String args[]){
+            Action action = new MyAction(); //추상 클래스는 객체화 할 수 없으므로
+            action.exec();
+        }
+    }
+
+//////////////  익명 클래스 사용 ////////////////
+
+    //MyAction을 사용하지 않고 Action을 상속받는 익명 클래스를 만들어서 사용하도록 수정
+    public class ActionExam{
+        public static void main(String args[]){
+            Action action = new Action(){ //추상 클래스를 객체화 함과 동시에 익명클래스 사용
+                public void exec(){
+                    System.out.println("exec");
+                }
+            };
+            action.exec();
+        }
+    }
+
+//////////////  익명 클래스 사용 ////////////////
+```
+
+람다식 처럼 **일회용**으로만 사용하는 경우가 있다면 **익명클래스를** 사용하면 좋을듯 하다.
+
+</div>
+</details>
+
+### ----------------------------->8강 인터페스와 다른 형식의 클래스
+
+<details>
+<summary> 9강 예외 처리  </summary>
+<div markdown="1">
+
+```java
+public class ExceptionExam{
+	
+	public static void main(String[] args){
+		int i = 10;
+		int j = 5;
+		int k = i/j;
+		System.out.println(k);
+	}
+}
+// k의 출력값은 2로 정상 작동
+
+public class ExceptionExam{
+	
+	public static void main(String[] args){
+		int i = 10;
+		int j = 0;
+		int k = i/j;
+		System.out.println(k);
+	}
+}
+// 0을 나누게 되면 프로그램 오류가 발생
+// Exception 발생 지점부터 프로그램 오류
+```
+
+**프로그램이 실행중에 예기치 못한 사건을 “예외" 라고 한다.**
+
+**대처법 : try-catch-finally(예외 처리)**
+
+```java
+try{
+	...
+}
+// 오류가 발생할 것 같은 부분을 try블럭으로 감싸준다.
+catch(예외클래스 변수명){
+	...
+}
+// try블럭 안에서 발생할 수 있는 오류와 관련된 Exception 타입을 catch 블럭에서 처리
+finally{
+	...
+}
+// finally 블럭은 생략가능
+// 오류가 발생되었든 아니든 반드시 실행하므로, 반드시 실행하는 구문을 사용시 fainlly구문을 사용
+```
+
+**예외가 나왔던 위의 코드 해결 방법 (예외 처리 사용)**
+
+```java
+public class ExceptionExam{
+	
+	public static void main(String[] args){
+		int i = 10;
+		int j = 0;
+		try{
+			int k = i/j;
+			System.out.println(k);
+		}
+
+		catch(ArithmeticException e){
+			System.out.println("0으로 나눌 수 없습니다."+e.toString());
+		} // toString 메소드는 예외에 대한 정보를 알려줌
+
+		finally{
+			System.out.println("오류가 발생하든 발생하지 않든 무조건 실행");
+		}
+		System.out.println("main ent!!");
+	}
+}
+```
+
+**throws를 이용한 해결 방법**
+
+```java
+public class ExceptionExam2 {
+	
+	public static void main(String[] args){
+		int i = 10;
+		int j = 0;
+		int k = divide(i,j);
+		System.out.println(k);
+	}
+----------------- 오 류 코 드 -------------------
+	public static int divide(int i, int j) throws ArithmeticException{
+		int k = i/j;
+		return k;
+	} // (throws 발생 할 Exception)은 이 메소드 안에서 발생하는 어떤 오류든 처리 가능
+
+}
+----------------- 해 결 방 법 -------------------
+	public static void main(String[] args){
+		int i = 10;
+		int j = 0;
+		try{
+			int k = divide(i,j);
+			System.out.println(k);
+		}
+		catch(ArithmeticException e){
+			System.out.println(e.toString());
+		}
+	}
+----------------- 해 결 코 드 -------------------
+```
+
+**throw : 강제로 오류를 발생시키는 코드**
+
+- 주로 오류를 떠넘기는 throws와 같이 사용
+
+```java
+	public static void main(String[] args){
+		int i = 10;
+		int j = 0;
+		int k = divide(i,j);
+		System.out.println(k);
+	}
+
+	public static int divide(int i, int j){
+		if(j == 0){
+			System.out.println("2번째 매개변수는 0이면 안됩니다.");
+			return 0;
+		}
+		int k = i/j;
+		return k;
+	} 
+// 이럴 경우 반환값으로 0이 k변수에 들어가서 k의 값이 출력 되면서 0이 출력됨.
+// 0이라는 값을 나누었을 때 0이 나온다는 잘못된 값이 출력 될 가능성이 있으므로 예외로 오류가 나오지는 않지만 잘못된 상황.
+
+----------------- 오 류 코 드 -------------------
+	public static void main(String[] args){
+		int i = 10;
+		int j = 0;
+		try{
+			int k = divide(i,j);
+			System.out.println(k);
+		}
+		catch(IllegalArgumentException e){
+			System.out.println(e.toString());
+		}
+	}
+
+	public static int divide(int i, int j) throws IllegalArgumentException{
+		if(j == 0){
+			throw new IllegalArgumentException("0으로 나눌 수 없습니다.");
+			
+		}
+		int k = i/j;
+		return k;
+	} 
+
+----------------- 해 결 코 드 -------------------
+```
+
+**Exception 클래스**
+
+- Exception이나 Exception의 후손을 상속받아 만들어진 클래스
+- 클래스의 이름만으로 어떤 오류가 발생했는지 알려주어 **코드의 직관성**을 높인다.
+
+```java
+public class BizException extends RuntimeException{
+	super(msg);
+}
+public BizException(Exception ex){
+	super(ex);
+}
+// 문자열로된 오류메세지와 실제 발생 할 Exception을 담는 목적의 생성자 두 개 선언 
+// 이미 부모 class가 같은 기능을 가진 생성자가 있기 때문에 사용자가 정의한 Exceptiom개체에서 따로 할 것은 해당 생성자를 부모의 생성자에게 전달만 시켜주면 된다. (super 메소드 사용)
+
+----------- 사용자 정의 Exception 정의 -----------
+public class BizService{
+	public void bizMethod(int i) throws BizException{
+		System.out.println("비지니스 메소드 시작");
+		
+		if(i < 0)
+				thow new BizException("매개변수 i는 0 이상이어야 합니다.");
+
+		System.out.println("비지니스 메소드 종료");
+	}
+}
+----------- Exception을 발생시켜주는 코드 -----------
+public class BizExam{
+	public static void main(String[] args){
+		BizService biz = new BizService();
+		biz.bizMethod(5); // 정상 작동
+		try{
+			biz.bizMethod(-3); // 0보다 작은 값에선 Exception 발생
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+}
+----------- Exception을 사용하는 class 코드 -----------
+```
+
+</div>
+</details>
+
+### ----------------------------->9강 예외 처리
 
 <!--
 <details>
