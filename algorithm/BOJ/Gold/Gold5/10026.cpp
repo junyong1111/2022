@@ -78,7 +78,7 @@ int main(){
     ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    freopen("input.txt", "r", stdin);
+    // freopen("input.txt", "r", stdin);
 
     int N = 0;
     cin >> N;
@@ -110,7 +110,6 @@ int main(){
             Q.push(p);
             BFS(Map,visit, Q,s);
             notRedGreen ++;
-            // break;
         }
     }
    }
@@ -118,6 +117,7 @@ int main(){
 
 init(visit);
 Init(Map);
+
    for(int i=0; i<N; i++){
     for(int j=0; j<N; j++){
         if(visit[i][j]==0){
@@ -128,7 +128,6 @@ Init(Map);
             Q.push(p);
             BFS(Map,visit, Q,s);
             RedGreen ++;
-            break;
         }
     }
    }
