@@ -2,7 +2,7 @@
 
 using namespace std;
 
-
+void swap(int* a, int* b);
 void CoppyArray(int A[], int B[], int Size);
 void BubbleSrot(int A[], int Size);
 void BubbleSortImproved1(int A[], int Size);
@@ -57,9 +57,7 @@ void BubbleSrot(int A[], int Size){
         int com = A[0];
         for(int j=1; j<Size-i; j++){
             if(com>A[j] ){
-                int temp = A[j];
-                A[j] = A[j-1];
-                A[j-1] = temp;
+                swap(A[j], A[j-1]);
                 swapCnt ++;
             }
             cnt ++;
@@ -79,9 +77,7 @@ void BubbleSortImproved1(int A[], int Size){
         int com = A[0];
         for(int j=1; j<Size-i; j++){
             if(com>A[j] ){
-                int temp = A[j];
-                A[j] = A[j-1];
-                A[j-1] = temp;
+                swap(A[j], A[j-1]);
                 swapCnt ++;
                 com = A[j];
                 check = true;
@@ -104,9 +100,7 @@ void BubbleSortImproved2(int A[], int Size){
         for(int i=1; i< LastSwapPos; i++){
             cnt++;
             if(A[i-1] > A[i]){
-                int temp = A[i];
-                A[i] = A[i-1];
-                A[i-1] = temp;
+                swap(A[i], A[i-1]);
                 swapCnt ++;
                 SwapPos = i;
                
@@ -118,4 +112,11 @@ void BubbleSortImproved2(int A[], int Size){
 
     cout << cnt << " " << swapCnt << " ";
 
+}
+
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp; 
 }

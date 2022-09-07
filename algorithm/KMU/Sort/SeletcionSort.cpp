@@ -4,6 +4,7 @@
 using namespace std;
 
 void selectionSort(int A[], int Sz);
+void swap(int* a, int* b);
 
 
 int main(void){
@@ -41,12 +42,18 @@ void selectionSort(int A[], int Sz){
             }
         }
     if(minValue!=i){
-        int temp = A[minValue];
-        A[minValue] = A[i];
-        A[i] = temp;
+        swap(A[minValue], A[i]);
         countSwaps++;
      }
     }
     cout << countCmpOps << " " << countSwaps <<"\n";
+}
+
+
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp; 
 }
 

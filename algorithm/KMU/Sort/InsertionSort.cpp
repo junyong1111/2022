@@ -4,6 +4,7 @@
 using namespace std;
 
 void InsertionSort(int A[], int sz);
+void swap(int* a, int* b);
 
 int main(){
     ios::sync_with_stdio(false);
@@ -39,12 +40,17 @@ void InsertionSort(int A[], int sz)
             countCmpOps++;
             if(com<A[j]){
                 countSwaps++;
-                int temp = A[j];
-                A[j] = A[j+1];
-                A[j+1] = temp;
+                swap(A[j], A[j+1]);
             }
             else{break;}
         }
     }
     printf("%d %d ", countCmpOps, countSwaps);
+}
+
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp; 
 }
