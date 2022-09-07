@@ -8,7 +8,7 @@ void swap(int* a, int* b);
 
 
 int main(void){
-    freopen("input.txt", "r", stdin);
+    // freopen("input.txt", "r", stdin);
 
     int testCase = 0;
     cin >> testCase;

@@ -1,4 +1,5 @@
 #include <iostream>
+#define MAX_SIZE 1000
 
 using namespace std;
 
@@ -9,10 +10,7 @@ void BubbleSortImproved1(int A[], int Size);
 void BubbleSortImproved2(int A[], int Size);
 
 int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
-    freopen("input.txt", "r", stdin);
+    // freopen("input.txt", "r", stdin);
 
     int testCase = 0;
     cin >> testCase;
@@ -20,9 +18,9 @@ int main(){
     while(testCase--){
         int Size = 0;
         cin >> Size;
-        int Arr[Size] = {0};
-        int CoppyArr1[Size] = {0};
-        int CoppyArr2[Size] = {0};
+        int Arr[MAX_SIZE] = {0};
+        int CoppyArr1[MAX_SIZE] = {0};
+        int CoppyArr2[MAX_SIZE] = {0};
 
         for(int i=0; i<Size; i++){
             cin >> Arr[i] ;

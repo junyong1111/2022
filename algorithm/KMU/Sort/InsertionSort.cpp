@@ -4,14 +4,9 @@
 using namespace std;
 
 void InsertionSort(int A[], int sz);
-void swap(int* a, int* b);
 
 int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
-    freopen("input.txt", "r" ,stdin);
-
+    // freopen("input.txt", "r" ,stdin);
     int testCase = 0;
     cin >> testCase;
 
@@ -35,22 +30,19 @@ void InsertionSort(int A[], int sz)
     int countSwaps = 0; // swap 함수 실행 횟수
 
     for(int i =1; i<sz; i++){
-        int com = A[i];
-        for(int j=i-1; j>=0; j--){
+        int temp = A[i];
+        int j = i-1;
+        for(; j>=0; j--){
             countCmpOps++;
-            if(com<A[j]){
+            if(temp<A[j]){
+                A[j+1] = A[j];
                 countSwaps++;
-                swap(A[j], A[j+1]);
+            }else{
+                break;
             }
-            else{break;}
         }
+        A[j+1] = temp;
+        
     }
     printf("%d %d ", countCmpOps, countSwaps);
-}
-
-void swap(int* a, int* b)
-{
-    int tmp = *a;
-    *a = *b;
-    *b = tmp; 
 }
