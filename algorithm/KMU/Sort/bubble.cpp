@@ -20,19 +20,20 @@ int main(){
         cin >> Size;
         int Arr[MAX_SIZE] = {0};
         int CoppyArr1[MAX_SIZE] = {0};
-        int CoppyArr2[MAX_SIZE] = {0};
 
         for(int i=0; i<Size; i++){
-            cin >> Arr[i] ;
+            cin >> CoppyArr1[i] ;
         }
         CoppyArray(Arr,CoppyArr1,Size);
-        CoppyArray(Arr,CoppyArr2,Size);
-
         BubbleSrot(Arr, Size);
-        BubbleSortImproved1(CoppyArr1, Size);
-        BubbleSortImproved2(CoppyArr2, Size);
-        cout << endl;
+        
+        CoppyArray(Arr,CoppyArr1,Size);
+        BubbleSortImproved1(Arr, Size);
+        
+        CoppyArray(Arr,CoppyArr1,Size);
+        BubbleSortImproved2(Arr, Size);
 
+        cout << "\n";
 
 
     }
@@ -44,62 +45,59 @@ int main(){
 
 void CoppyArray(int A[], int B[], int Size){
     for(int i=0; i<Size; i++){
-        B[i] = A[i];
+        A[i]=  B[i] ;
     }
 }
 
 void BubbleSrot(int A[], int Size){
-    int cnt = 0;
-    int swapCnt = 0;
+    int countCmpOps = 0; // 비교 연산자 실행 횟수 
+    int countSwaps = 0; // swap 함수 실행 횟수
     for(int i=0; i<Size; i++){
-        int com = A[0];
         for(int j=1; j<Size-i; j++){
-            if(com>A[j] ){
-                swap(A[j], A[j-1]);
-                swapCnt ++;
+            if(A[j-1]>A[j]){
+                swap(A[j-1],A[j]);
+                countSwaps++;
             }
-            cnt ++;
-            com = A[j];
+            countCmpOps ++;
+            
         }
     }
 
-    cout << cnt << " " << swapCnt << " ";
+    cout << countCmpOps << " " << countSwaps << " ";
 
 }
 
 void BubbleSortImproved1(int A[], int Size){
-    int cnt = 0;
-    int swapCnt = 0;
+    int countCmpOps = 0; // 비교 연산자 실행 횟수 
+    int countSwaps = 0; // swap 함수 실행 횟수
     for(int i=0; i<Size; i++){
         bool check = false;
-        int com = A[0];
         for(int j=1; j<Size-i; j++){
-            if(com>A[j] ){
+            if(A[j-1]>A[j]){
                 swap(A[j], A[j-1]);
-                swapCnt ++;
-                com = A[j];
+                countSwaps ++;
                 check = true;
             }
-            cnt ++;
+            countCmpOps ++;
         }
         if(check == false){break;} //데이터를 교환하지 않았으면 이미 데이터는 정렬된 상태이다.
     }
 
-    cout << cnt << " " << swapCnt << " ";
+    cout << countCmpOps << " " << countSwaps << " ";
 }
 
 void BubbleSortImproved2(int A[], int Size){
-    int cnt = 0;
-    int swapCnt = 0;
+    int countCmpOps = 0; // 비교 연산자 실행 횟수 
+    int countSwaps = 0; // swap 함수 실행 횟수
     int LastSwapPos = Size;
 
     while(LastSwapPos > 0){
         int SwapPos = 0;
         for(int i=1; i< LastSwapPos; i++){
-            cnt++;
+            countCmpOps++;
             if(A[i-1] > A[i]){
                 swap(A[i], A[i-1]);
-                swapCnt ++;
+                countSwaps ++;
                 SwapPos = i;
                
             }
@@ -108,7 +106,7 @@ void BubbleSortImproved2(int A[], int Size){
         LastSwapPos = SwapPos;
     }
 
-    cout << cnt << " " << swapCnt << " ";
+    cout << countCmpOps << " " << countSwaps << " ";
 
 }
 
