@@ -28,5 +28,4 @@ int fibo(int N){
     else{
         return fibo(N-1) + fibo(N-2);
     }
-    
 }
