@@ -19,7 +19,7 @@ int main(){
     int idx = K;    
     for(int i=1; i<=N; i++)
         V.push_back(i);
-    if(N==1){Q.push(1); }
+    if(N==1){Q.push(1); } //예외 처리
     else{
         Q.push(V[idx]);
         visit[idx+1] = 1;
