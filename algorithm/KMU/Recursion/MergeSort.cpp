@@ -4,7 +4,7 @@ using namespace std;
 void bulidList(int *arr, int size);
 void checkList(int *arr, int size);
 void mergeSort(int *arr, int start, int end, int size);
-void merge(int *arr, int start, int mid , int end, int size);
+void merge(int *arr, int start, int mid , int end, int size,int target);
 int cnt;
 
 int main(){
@@ -13,19 +13,19 @@ int main(){
     cout.tie(NULL);
     // freopen("input.txt", "r", stdin);
 
-    int testCase = 0;
-    cin >> testCase;
+    // int testCase = 0;
+    // cin >> testCase;
     
-    while(testCase--){
+    // while(testCase--){
         int * arr = new int;
         int size = 0;
+        int targetNum = 0;
         cnt = 0;
-        cin >> size ;
+        cin >> size  >> targetNum;
         bulidList(arr,size);
-        mergeSort(arr,0, size-1, size);
-        cout << cnt << "\n";
+        mergeSort(arr,0, size-1, size,targetNum);
         // checkList(arr,size);
-    }
+    // }
 
 
     return 0;
@@ -46,7 +46,7 @@ void checkList(int *arr, int size){
     cout << "\n";
 }
 
-void merge(int *arr, int start, int mid , int end, int size){
+void merge(int *arr, int start, int mid , int end, int size, int target){
     int tempArr[size];
 
     for(int i=start; i<=end; i++)
@@ -57,6 +57,9 @@ void merge(int *arr, int start, int mid , int end, int size){
     int j = mid+1;
     while(i<=mid && j<=end){
         cnt++;
+        if(cnt == target){
+            
+        }
         if(tempArr[i] <= tempArr[j]){
             arr[idx++] = tempArr[i++]; 
         }
