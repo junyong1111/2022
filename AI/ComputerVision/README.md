@@ -181,3 +181,245 @@
         
     
     여기서는 상관, 컨볼루션 둘을 구분하지 않고 컨볼루션이라는 용어를 사용
+
+여기서는 상관, 컨볼루션 둘을 구분하지 않고 컨볼루션이라는 용어를 사용
+
+3. 기하 연산
+    - 일정한 기하 연산으로 결정된 화소의 명암값에 따라 새로운 값 결정
+    - 동차 좌표(Homogeneous coordinate)와 동차 행렬
+    
+    동차 좌표 사용 이유
+    
+    ⇒ 복합 변환을 이용한 계산 효율
+    
+    ex) 이동 후 회전은 두 번의 행렬  곱셈, 하지만 복합 변환을 이용하면 한 번의 곱셈
+    
+    ### Gaussian Filtering
+    
+    블러한 이미지를 얻을 수 있음
+    
+    ![스크린샷 2022-10-25 오후 10.54.04.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2f74ace7-5510-47ef-bcaf-20cabaad89b3/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-10-25_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_10.54.04.png)
+    
+    분산 값 ⇒ 필터의 사이즈 
+    
+    → **분산 값이 커지면 이미지가 더 흐려진다**
+    
+    ### Edges
+    
+    - 물체 내부나 배경은 변화가 없거나 작음
+    - **물체 경계는 변화가 큼**
+    
+    → 명암,컬러  또는 텍스처의 변화량을 측정하여 **변화량이 큰 곳을 Edge로 검출**
+    
+    **Edge를 사용하는 이유**
+    
+    - 물체의 경계를 표시해 줌
+        
+        → 물체를 구별할 수 있음
+        
+    - 매칭에 용이한 선분이나 곡선으로 변환 가능
+    
+    **Edge의 한계**
+    
+    - 실종된 Edge(거짓 부정). 거짓 Edge(거짓 긍정)발생
+    - 이들 오류를 어떻게 최소화?
+    
+    **Detection edges**
+    
+    - What’s an edge?
+        - intensity discontinuity ⇒ **rapid change**
+    - **How** can we **find large changes** in intensity?
+        - **gradient operator** seems like the right solution
+    
+    **Image gradient**
+    
+    - How can we differentiate a digital image F[x,y]?
+        - Option 1 : reconstruct a continuous image, f, then take gradient
+        - **Option 2 : take discrete derivative (finite difference)**
+        
+        ![스크린샷 2022-09-19 오후 12.31.31.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e5886def-c262-4444-8c4c-cfa4a8c76e16/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-09-19_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_12.31.31.png)
+        
+    
+    **디지털 영상의 미분**
+    
+    - |X-1 | X | X+1|
+        - ex) 1차 미분에 해당하는 마스크
+            - f’(x) → f(x+1) - f(x)
+                - △x = 1
+                
+                ![스크린샷 2022-09-19 오후 12.45.42.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5018835a-24e2-41a1-a683-278525f21d05/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-09-19_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_12.45.42.png)
+                
+        - ex) 2차 미분에 해당하는 마스크
+            - f’’(x) →f’(x) - f’(x-1)
+            - △x = 1
+            
+            → f’(x) = f(x+1) - f(x)
+            
+            → f’(x-1) = f(x) - f(x-1) 
+            
+            → f(x-1) - 2f(x) + f(x+1)
+            
+            ![스크린샷 2022-09-19 오후 12.48.36.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0841925e-23f0-4708-a3d4-0648b59b9e67/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-09-19_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_12.48.36.png)
+            
+    
+    **Edge 검출 과정**
+    
+    - **1차 미분에서 봉우리**
+    - **2차 미분에서 영교차를 찾음**
+    
+    **현실에서는 잡음 때문에 스무딩이 필요 (가우시안 필터 사용)**
+    
+    - △x = 2 로 설정
+    - 이에 해당하는 2차미분 마스크
+    
+    ![스크린샷 2022-09-19 오후 12.56.13.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5ea874ab-4319-48b7-992f-91c7e183515a/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-09-19_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_12.56.13.png)
+    
+    **2차원 정방형으로 확장하여 스무딩 효과**
+    
+    ![스크린샷 2022-09-19 오후 1.02.08.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c8c7f8c5-09b1-42e3-b92a-487c99713254/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-09-19_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_1.02.08.png)
+    
+    **Edge 검출 연산**
+    
+    - **엣지의 방향은 그래디언트와 수직**이다.
+    - 잡음이 심한 경우 1차미분과 2차미분은 잡음을 증폭시킴
+        
+        **→ 가우시안을 사용**해야 하는 이유
+        
+    1. 이미지(f) → 가우시안 필터를 적용 (잡음 제거)
+    2. 엣지 찾기 필터 적용(1차 미분)
+    
+    **총 2번의 필터 연산을 사용**
+    
+    미분+가우시안(DOG?) 필터가 있다고 가정하면 1번의 연산으로 엣지를 찾을 수 있음
+    
+    가우시안을 미분 → 이미지 곱하기
+    
+    **LOG 필터**
+    
+    - LOG 필터 : (가우시안+ 2차미분)
+    
+    가우시안 → 2차미분 → 이미지 컨볼루션 → 영교차 검출
+    
+    ![스크린샷 2022-09-21 오후 12.38.28.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/99747be9-8f09-4940-914d-f7d86c9b943a/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-09-21_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_12.38.28.png)
+    
+    라플라시안:  2차미분 필터
+    
+    **가우시안과 scale**
+    
+    - 이미지를 줄여주는 것 → 가우시안 블러 ↑
+    - 블러↑,   이미지 축소 → 스케일이 커짐
+    - 이미지의 Size와는 관계가 없고 관찰자 입장에서 이미지를 넓게 본다는 의미
+    
+    ![스크린샷 2022-09-21 오후 12.54.04.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/45982ceb-f190-4514-b742-32babdf7dd7d/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-09-21_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_12.54.04.png)
+    
+    ### Supervised Learning
+    
+    **회귀(Regression)**
+    
+    - **Regression : 정답값이 실수 real-valued**
+        - ex) 몸무게, 키
+    
+    **분류(Classification)**
+    
+    - **Classification : 정답값이 명확함 categorical**
+        - ex) 고양이, 강아지
+    
+    ### Unsupervised Learning
+    
+    **군집화(Clustring)**
+    
+    - 군집화 : 유사한 특징 벡터들을 끼리끼리 모음(K-means, SOM 신경망, 민시프 등..)
+    
+    ### Reinforcement Learning
+    
+    - 강화학습
+    
+    ### 일반화 능력
+    
+    - 학습 과정에서 사용하지 않은 테스트 집합으로 학습이 완료된 분류기 성능 평가
+    - 학습 집합과 테스트 집합에 대한 성능이 비슷하면 일반화 능력이 뛰어남
+    - **과적합** 하면 일반화능력이 떨어짐
+        - 과적합 : 주어진 데이터셋은 잘 맞추지만 새로운 데이터셋은 맞추지 못함
+    
+    ### **Regression**
+    
+    **Linear Regression Problem**
+    
+    - Input : Dataset Z = {(x1, y1), …. (xn, yn)}
+    - Output : A linear function
+    
+    **Lost function (Cost Function)**
+    
+    손실함수 : 학습에 대한 기준
+    
+    ![스크린샷 2022-09-26 오후 12.38.25.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/82337a3c-281c-44df-88b1-0d0dc880b6f0/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-09-26_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_12.38.25.png)
+    
+    cost funtion + linear regression ⇒ 무조건 convex
+    
+    **Underfitting(High Bias)**
+    
+    - 학습데이터와 테스트데이터 모두 예측 못함
+    - 학습데이터가 충분하지 않았을 때 발생
+        - 학습데이터를 증가시켜줘야 함
+    
+    **Overfitting(High Variance)**
+    
+    - 학습데이터는 잘 예측하지만 테스트데이터는 예측 못함
+    - capacity 가 들어날수록 표현력이 높아지지만 과적합에 빠지기 쉬워진다.
+    - 규제를 이용하여 방지할 수 있음
+        - 주어진 데이터 Z를 Traing data 와 Test data로 나누어서 학습 진행
+    
+    ### Classification
+    
+    - Binary Classification
+        - 2개 값을 예측
+    - Multiclass Classification
+        - 3개 이상의 값을 예측
+    
+    Linear 모델로는 분류 Task를 해결하기 어려웠다(XOR)문제를 해결하기 힘들다.
+    
+    **→ Logistic Regression 을 이용하여 이를 해결**
+    
+    연속된 값 (input) → 연속된 값(output) ⇒ Linear Regression
+    
+    연속된 값 (input) → 이산된 값(output) ⇒ Logistic Regression
+    
+    분류와 같은 이산적인 값을 예측하는 Task에서는 Gradient Descent(Linear Regrssion)을 이용하여 해결하기 힘들다. 이 때 Sigmoid 이용하면 해결이 가능하다
+    
+    ![스크린샷 2022-10-25 오후 11.54.06.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7fd68e9b-eeb6-4112-88bc-6b7021e4078e/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-10-25_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_11.54.06.png)
+    
+    활성화 함수 ⇒ Cross-entropy loss를 
+    
+    ⇒ entropy는 모든 정보를 알아야 함
+    
+    ⇒ 애매한 값에서는 값이 커짐 즉, 맞거나 틀리거나로 학습
+    
+    ![스크린샷 2022-10-25 오후 11.52.35.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b12f8c81-e57f-48df-a4aa-b72618438ef2/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2022-10-25_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_11.52.35.png)
+    
+    **Multi Classification에서는** **SoftMax(활성함수)를 사용하여 확률값으로 바꿔준다.**
+    
+    Binary Classifiaction → Logistic Sigmoid(활성함수) →  Cross-entropy loss 
+    
+    Multi Classifiaction → SoftMax활성함수) →  Cross-entropy loss 
+    
+    ### Gradient Descent
+    
+    → 항상 글로벌 미니멈에 빠지는건 아님
+    
+    확률론적 경사 하강법(SGD)
+    
+    샘플 한 개만을 랜덤으로 뽑아서 업데이트(속도가 빠름)
+    
+    → 이상한 샘플이 끼면 노이즈가 심할 수 있음
+    
+    → 모든 데이터를 이용하는게 아닌 배치 사이즈를 이용
+    
+    **unbised estimate**
+    
+    모든 데이터를 사용 ⇒ Gradient Descent
+    
+    1개의 데이터만을 사용 ⇒Sthochastic Gradient Descent
+    
+    위 2개의 장점만을 사용 ⇒ mini-batch Sthochastic Gradient Descent
+    
+    ⇒ 전체 데이터가 아닌 특정 사이즈의 미니 배치 사이즈의 데이터만을 사용
