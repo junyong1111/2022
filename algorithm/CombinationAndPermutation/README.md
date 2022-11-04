@@ -41,6 +41,63 @@ int main(){
 }
 ```
 
+2. DFS와 Checklist를 사용
+- 필요 인자
+    - 입력 Vector(N크기)
+    - 정답 Vector(R크기)
+    - CheckList(N크기)
+    - Level
+    - R
+- 종료 조건
+    - Level == R이 같다면 정답 배열의 모든 값을 출력
+- 반복 조건
+    - 입력배열의 크기만큼 반복문 수행
+    - if Checklsit가 ==0 
+    - 정답Vector[Level] = 입력Vector[i]삽입
+    - Checklsit가 = 1로 설정
+    - DFS Level+1 수행
+    - Checklsit가 = 0으로 재설정
+
+```c++
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+void DFS(vector<int>&V,vector<int>&result,vector<int>&checkList, int level, int r){
+    if(level==r){
+        for(auto r : result){
+            cout << r << " ";
+        }
+        cout << "\n";
+        return;
+    }
+    else{
+        for(int i=0; i<V.size(); i++){
+            if(checkList[i]==0){
+                result[level] = V[i];
+                checkList[i] = 1;
+                DFS(V,result, checkList,level+1,r);
+                checkList[i] = 0;
+            }
+        }
+    }
+}
+
+int main(){
+    vector<int>V;
+    for(int i=1; i<=3; i++){
+        V.push_back(i);
+    }
+    int r = 2;
+    vector<int>result(r,0);
+    vector<int>checkList(V.size(),0);
+
+    DFS(V,result, checkList,0,r);
+    return 0;
+}
+```
+
 # 조합 - Combination
 - n개의 공 중 r개를 뽑아 만드는 순서없는 조합
 1. algorithm 헤더 함수 사용
