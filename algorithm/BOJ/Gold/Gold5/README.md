@@ -327,3 +327,111 @@ RRRRR
 ### 성공 
  
 2번째 탐색 때 브레이크를 걸어서 끝까지 탐색이 안된거였다..... 실수하지말자...
+
+
+- 3.백준(9251) LCS
+
+####  최장공통부분스트링을 찾는 최적화 문제이다
+##### <u> 최장 => 최적화 => DP => 점화식 => Working Backward</u>
+
+### 최적화문제는 DP로 해결가능하며 DP를 생각했다면 구조를 파악해서 점화식을 세운다.
+### 배우고나면 그닥 어렵지 않은 문제이다.
+
+1. 조건에 맞게 String을 입력받음
+2. Memoization을 사용해야 하므로 최대 사이즈의 2차원 배열을 미리 선언
+3. 배열의 값을 -1로 초기화
+4. str1 또는 str2의 사이즈가 0이 있다면 더 이상 최장부분이 없으므로 0리턴
+5. 만약 str1과 str2의 값이 같다면 
+    - 2차원배열의 값을 재귀적으로 갱신 후 return
+    - 2차원 배열의 대각선의 값 +1
+6. 만약 값이 다르다면
+    - 2차원배열의 값을 재귀적으로 갱신 후 return
+    - 2차원배열의 왼쪽과 위쪽 중 더 Max값으로 값을 갱신
+
+### DP버전 최장길이뿐 아니라 어떠한 문자열인지도 알 수 있음
+
+```c++
+#include <iostream>
+#define MAX_SIZE 101
+#define MAX(a,b) ((a)>(b)?(a):(b))
+
+int L[MAX_SIZE][MAX_SIZE];
+int S[MAX_SIZE][MAX_SIZE];
+
+using namespace std;
+
+int Len(char *str);
+int LCS_DP(char *str1, char *str2, int M, int N);
+void printLCS(char *str1, char *str2,int M, int N);
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    // freopen("input.txt" , "r", stdin);
+
+    int testCase = 0;
+    cin >> testCase;
+
+    while(testCase--){
+        char str1[MAX_SIZE];
+        char str2[MAX_SIZE];
+        cin >> str1 >> str2;
+        int M = Len(str1);
+        int N = Len(str2);
+        int answer = LCS_DP(str1,str2,M,N);
+        cout << answer << " "; 
+        printLCS(str1,str2,M,N);
+        cout <<"\n";
+    }
+
+
+    return 0;
+}
+
+int Len(char *str){
+    int cnt = 0;
+    char * temp = str;
+    while(*temp!=0){
+        cnt++;
+        temp++;
+    }
+    return cnt;
+}
+
+int LCS_DP(char *str1, char *str2, int M, int N){
+    for(int i=0; i<=M; i++)
+        L[i][0] = 0;
+    for(int i=0; i<=N; i++)
+        L[0][i] = 0;
+    for(int i=1; i<=M; i++){
+        for(int j=1; j<=N; j++){
+            if(str1[i-1] == str2[j-1]){
+                L[i][j] = L[i-1][j-1]+1; // 문자가 같으면 대각선 +1
+                S[i][j] = 0;
+            }
+            else{
+                L[i][j] = MAX(L[i][j-1], L[i-1][j]);  //다르면 왼쪽 오른쪽 중 큰거
+                if(L[i][j] == L[i][j-1])
+                    S[i][j] = 1;
+                else
+                    S[i][j] = 2;
+            }
+        }
+    }
+    return L[M][N];
+}
+
+void printLCS(char *str1, char *str2,int M, int N){
+    if(M==0 || N==0)
+        return;
+    if(S[M][N] ==0){
+        printLCS(str1, str2, M-1, N-1);
+        cout << str1[M-1];
+    }
+    else if(S[M][N]==1)
+        printLCS(str1, str2, M, N-1);
+    else if(S[M][N]==2)
+        printLCS(str1, str2, M-1, N);
+}
+```
