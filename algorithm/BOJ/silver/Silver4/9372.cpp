@@ -35,7 +35,6 @@ int main()
         queue<int>Q;
         Q.push(1);
         // 최초 1번 노드 삽입 후 여행시작
-
         int answer = BFS(G,visit, Q,0);
         cout << answer-1 << "\n";
     }
