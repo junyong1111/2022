@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #define MAX_SIZE 9
 
 using namespace std;
